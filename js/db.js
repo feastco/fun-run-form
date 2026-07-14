@@ -13,7 +13,7 @@ function initDB() {
   // 1. Seed Event
   if (!localStorage.getItem(DB_KEYS.EVENT)) {
     const event = {
-      name: "Bandung Bedas Run 2026",
+      name: "Fun Run 2026",
       slug: "pendaftaran-bedas-run-2026-v3",
       date: "2026-09-06",
       deadline: "2026-08-17T23:59:59",
