@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulir Pendaftaran — Bandung Bedas Run 2026</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Additional custom form tweaks */
+    .field input:invalid:not(:placeholder-shown) {
+      border-color: var(--danger);
+      background-color: #FFF5F5;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading Overlay -->
+  <div id="loading-overlay" class="loading-screen" style="display: none;">
+    <i data-lucide="loader-2" class="spin" style="width: 36px; height: 36px; color: var(--primary);"></i>
+    <p style="font-size: 14px; font-weight: 600; color: var(--secondary);">Memproses Pendaftaran...</p>
+  </div>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="header-inner">
+      <a href="index.html" style="color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+        <i data-lucide="arrow-left" style="width: 24px; height: 24px;"></i>
+      </a>
+      <div>
+        <div class="header-title" id="nav-category-title">Mengisi Data Peserta</div>
+        <div class="header-subtitle" id="nav-category-price">Kategori: -</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-container" style="padding-top: 20px;">
+
+    <!-- Error Banner (Quota Full or Duplicate) -->
+    <div id="error-banner" class="rules-warning" style="display: none; background-color: var(--danger-light); border-color: var(--danger); margin-bottom: 20px;">
+      <div class="rules-warning-icon">
+        <i data-lucide="alert-circle" style="color: var(--danger);"></i>
+      </div>
+      <div class="rules-warning-text">
+        <strong id="error-title">Pendaftaran Gagal</strong>
+        <p id="error-message" style="margin-top: 4px; font-size: 12px;"></p>
+        <div id="error-action-wrap" style="margin-top: 10px; display: none;">
+          <a id="error-action-btn" href="tiket.html" class="submit-btn" style="padding: 6px 12px; font-size: 11px; background-color: var(--secondary); text-decoration: none;">
+            Cek Tiket Saya
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Registration Form -->
+    <form id="registration-form" onsubmit="handleFormSubmit(event)">
+      <input type="hidden" id="selected-category-id" name="category_id">
+
+      <!-- CARD 1: DATA DIRI -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon" style="background-color: #E0F2FE;">
+            <i data-lucide="user" style="color: #0284C7;"></i>
+          </div>
+          <div>
+            <h2>Data Diri</h2>
+            <p>Informasi pribadi peserta (sesuai identitas resmi)</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="field-group">
+            <!-- Nama Lengkap -->
+            <div class="field">
+              <label for="buyer_name">Nama Lengkap <span class="req">*</span></label>
+              <input type="text" id="buyer_name" name="buyer_name" placeholder="Nama lengkap sesuai KTP" required>
+            </div>
+
+            <!-- WhatsApp & Email -->
+            <div class="field-group cols-2">
+              <div class="field">
+                <label for="buyer_phone">Nomor WhatsApp <span class="req">*</span></label>
+                <input type="tel" id="buyer_phone" name="buyer_phone" placeholder="Contoh: 08123456789" required pattern="^(\+62|62|0)8[1-9][0-9]{6,11}$">
+                <span class="field-hint">Hanya angka. Contoh: 08123456789</span>
+              </div>
+              <div class="field">
+                <label for="buyer_email">Email <span class="req">*</span></label>
+                <input type="email" id="buyer_email" name="buyer_email" placeholder="nama@email.com" required>
+              </div>
+            </div>
+
+            <!-- NIK & Gender -->
+            <div class="field-group cols-2">
+              <div class="field">
+                <label for="nik">No. KTP (16 Digit NIK) <span class="req">*</span></label>
+                <input type="text" id="nik" name="nik" placeholder="Contoh: 3204123456780001" required maxlength="16" minlength="16" pattern="^[0-9]{16}$">
+                <span class="field-hint">Wajib 16 digit angka KTP Anda</span>
+              </div>
+              <div class="field">
+                <label for="jenis_kelamin">Jenis Kelamin <span class="req">*</span></label>
+                <select id="jenis_kelamin" name="jenis_kelamin" required>
+                  <option value="" disabled selected>-- Pilih --</option>
+                  <option value="L">Laki-laki</option>
+                  <option value="P">Perempuan</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Tempat Lahir & Tanggal Lahir -->
+            <div class="field-group cols-2">
+              <div class="field">
+                <label for="tempat_lahir">Tempat Lahir <span class="req">*</span></label>
+                <input type="text" id="tempat_lahir" name="tempat_lahir" placeholder="Kota tempat lahir" required>
+              </div>
+              <div class="field">
+                <label for="tanggal_lahir">Tanggal Lahir <span class="req">*</span></label>
+                <input type="date" id="tanggal_lahir" name="tanggal_lahir" required>
+              </div>
+            </div>
+
+            <!-- Komunitas / Instansi -->
+            <div class="field">
+              <label for="nama_instansi">Nama Instansi / Komunitas <span class="field-hint">(Opsional)</span></label>
+              <input type="text" id="nama_instansi" name="nama_instansi" placeholder="Tulis '-' jika tidak ada">
+            </div>
+
+            <!-- Kewarganegaraan -->
+            <div class="field">
+              <label for="kewarganegaraan">Kewarganegaraan <span class="req">*</span></label>
+              <select id="kewarganegaraan" name="kewarganegaraan" required onchange="handleCitizenshipChange(this.value)">
+                <option value="" disabled selected>-- Pilih --</option>
+                <option value="WNI">WNI (Warga Negara Indonesia)</option>
+                <option value="WNA">WNA (Warga Negara Asing)</option>
+              </select>
+            </div>
+
+            <!-- Regional Dropdowns (Visible for WNI) -->
+            <div id="regional-wrap">
+              <div class="field-group cols-2">
+                <div class="field">
+                  <label for="alamat_provinsi">Provinsi <span class="req">*</span></label>
+                  <select id="alamat_provinsi" name="alamat_provinsi" onchange="handleProvinsiChange(this.value)">
+                    <option value="" disabled selected>-- Pilih Provinsi --</option>
+                    <option value="DKI JAKARTA">DKI JAKARTA</option>
+                    <option value="JAWA BARAT">JAWA BARAT</option>
+                    <option value="JAWA TENGAH">JAWA TENGAH</option>
+                    <option value="JAWA TIMUR">JAWA TIMUR</option>
+                    <option value="BANTEN">BANTEN</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="alamat_kabupaten">Kota / Kabupaten <span class="req">*</span></label>
+                  <select id="alamat_kabupaten" name="alamat_kabupaten" disabled onchange="handleKabupatenChange(this.value)">
+                    <option value="" disabled selected>-- Pilih Kabupaten --</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field-group cols-2" style="margin-top: 14px;">
+                <div class="field">
+                  <label for="alamat_kecamatan">Kecamatan <span class="req">*</span></label>
+                  <select id="alamat_kecamatan" name="alamat_kecamatan" disabled onchange="handleKecamatanChange(this.value)">
+                    <option value="" disabled selected>-- Pilih Kecamatan --</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="alamat_desa">Desa / Kelurahan <span class="req">*</span></label>
+                  <select id="alamat_desa" name="alamat_desa" disabled>
+                    <option value="" disabled selected>-- Pilih Desa --</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Alamat Lengkap -->
+            <div class="field">
+              <label for="alamat_detail">Alamat Rumah Lengkap <span class="field-hint">(Nama jalan, RT/RW, No. Rumah)</span></label>
+              <textarea id="alamat_detail" name="alamat_detail" rows="2" placeholder="Tulis alamat tempat tinggal sekarang"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 2: UKURAN KAOS -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon" style="background-color: #FDF4FF;">
+            <i data-lucide="shirt" style="color: #A855F7;"></i>
+          </div>
+          <div>
+            <h2>Ukuran Kaos</h2>
+            <p>Pilih ukuran kaos jersey race pack Anda</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="field">
+            <label for="ukuran_kaos">Ukuran Kaos <span class="req">*</span></label>
+            <select id="ukuran_kaos" name="ukuran_kaos" required>
+              <option value="" disabled selected>-- Pilih Ukuran --</option>
+              <option value="XS">XS (Lebar 44cm, Panjang 64cm)</option>
+              <option value="S">S (Lebar 47cm, Panjang 67cm)</option>
+              <option value="M">M (Lebar 50cm, Panjang 70cm)</option>
+              <option value="L">L (Lebar 53cm, Panjang 73cm)</option>
+              <option value="XL">XL (Lebar 56cm, Panjang 75cm)</option>
+              <option value="XXL">XXL (Lebar 59cm, Panjang 77cm)</option>
+              <option value="3XL">3XL (Lebar 62cm, Panjang 79cm)</option>
+              <option value="4XL">4XL (Lebar 65cm, Panjang 81cm)</option>
+              <option value="5XL">5XL (Lebar 68cm, Panjang 83cm)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 3: INFORMASI MEDIS -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon" style="background-color: #FFF7ED;">
+            <i data-lucide="activity" style="color: #EA580C;"></i>
+          </div>
+          <div>
+            <h2>Informasi Tambahan & Medis</h2>
+            <p>Data keselamatan dan kontak darurat</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="field-group">
+            <div class="field-group cols-2">
+              <div class="field">
+                <label for="golongan_darah">Golongan Darah <span class="req">*</span></label>
+                <select id="golongan_darah" name="golongan_darah" required>
+                  <option value="" disabled selected>Pilih...</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="AB">AB</option>
+                  <option value="O">O</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="riwayat_penyakit">Riwayat Penyakit <span class="field-hint">(Opsional)</span></label>
+                <input type="text" id="riwayat_penyakit" name="riwayat_penyakit" placeholder="Asma, Jantung, dst. (Tulis '-' jika tidak ada)">
+              </div>
+            </div>
+
+            <div class="field-group cols-2" style="margin-top: 14px;">
+              <div class="field">
+                <label for="kontak_darurat">Nama Kontak Darurat <span class="req">*</span></label>
+                <input type="text" id="kontak_darurat" name="kontak_darurat" placeholder="Nama orang terdekat" required>
+              </div>
+              <div class="field">
+                <label for="relasi_kontak_darurat">Relasi Kontak Darurat <span class="req">*</span></label>
+                <input type="text" id="relasi_kontak_darurat" name="relasi_kontak_darurat" placeholder="Ibu, Ayah, Suami, Teman, dst." required>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RULES ACCORDION SECTION -->
+      <div class="rules-section">
+        <div class="rules-section-title">Peraturan & Ketentuan Event</div>
+        
+        <div class="rules-warning">
+          <div class="rules-warning-icon">
+            <i data-lucide="alert-triangle" style="width: 20px; height: 20px;"></i>
+          </div>
+          <div class="rules-warning-text">
+            <strong>Pernyataan Medis & Tanggung Jawab</strong><br>
+            Setiap peserta wajib dalam keadaan sehat secara fisik. Kelalaian mengisi data kesehatan secara jujur dapat membahayakan diri sendiri dan menggugurkan klaim pertanggungan panitia.
+          </div>
+        </div>
+
+        <!-- Accordion 1 -->
+        <div class="accordion-card" id="rules-acc-1">
+          <div class="accordion-header" onclick="toggleAccordion('rules-acc-1')">
+            <div class="accordion-icon-wrap" style="background-color: #EEF2FF; color: #4F46E5;">
+              <i data-lucide="file-text"></i>
+            </div>
+            <span>Peraturan Pendaftaran</span>
+            <i data-lucide="chevron-down" class="accordion-chevron" style="width: 16px; height: 16px;"></i>
+          </div>
+          <div class="accordion-body">
+            <ul>
+              <li>Pendaftaran hanya dilakukan online via portal resmi ini.</li>
+              <li>Data diri wajib sesuai dengan kartu identitas resmi KTP/Paspor.</li>
+              <li>Pendaftaran bersifat <strong>non-transferable</strong> (tidak boleh dialihkan) dan <strong>non-refundable</strong> (tidak dapat di-refund).</li>
+              <li>Racepack yang didapatkan sudah termasuk: Jersey Resmi, Nomor BIB, Medali Finisher (jika finish batas waktu), dan e-ticket pendaftaran.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Accordion 2 -->
+        <div class="accordion-card" id="rules-acc-2">
+          <div class="accordion-header" onclick="toggleAccordion('rules-acc-2')">
+            <div class="accordion-icon-wrap" style="background-color: #FEF2F2; color: #EF4444;">
+              <i data-lucide="user-check"></i>
+            </div>
+            <span>Ketentuan Peserta Lomba</span>
+            <i data-lucide="chevron-down" class="accordion-chevron" style="width: 16px; height: 16px;"></i>
+          </div>
+          <div class="accordion-body">
+            <ul>
+              <li>Peserta wajib hadir minimal 1 jam sebelum Flag-off dimulai.</li>
+              <li>Wajib memakai BIB nomor peserta di bagian depan dada secara jelas.</li>
+              <li>Peserta dilarang keras membawa senjata tajam, minuman beralkohol, obat terlarang, atau merokok di area kegiatan.</li>
+              <li>Hak podium juara 1, 2, dan 3 Master/Open mutlak ditentukan oleh waktu gun-time tim juri.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 4: PERNYATAAN / DECLARATIONS -->
+      <div class="declaration-wrap">
+        <div class="declaration-title">Surat Pernyataan Peserta</div>
+        
+        <div class="declaration-item" id="dec1" onclick="handleCheckboxToggle('chk-data-benar', 'dec1')">
+          <input type="checkbox" id="chk-data-benar" required onchange="validateDeclarations()">
+          <label for="chk-data-benar">Saya menyatakan bahwa seluruh data diri yang saya isi di atas adalah benar dan sesuai dengan kartu identitas resmi saya. <span class="req">*</span></label>
+        </div>
+
+        <div class="declaration-item" id="dec2" onclick="handleCheckboxToggle('chk-sehat', 'dec2')">
+          <input type="checkbox" id="chk-sehat" required onchange="validateDeclarations()">
+          <label for="chk-sehat">Saya menyatakan dalam kondisi fisik dan mental yang sehat, siap mengikuti lari, dan membebaskan panitia dari segala tuntutan hukum jika terjadi kecelakaan akibat kelalaian penyakit bawaan saya. <span class="req">*</span></label>
+        </div>
+
+        <div class="declaration-item" id="dec3" onclick="handleCheckboxToggle('chk-tunduk', 'dec3')">
+          <input type="checkbox" id="chk-tunduk" required onchange="validateDeclarations()">
+          <label for="chk-tunduk">Saya telah membaca, mengerti, dan tunduk sepenuhnya pada peraturan & ketentuan Bandung Bedas Run 2026. <span class="req">*</span></label>
+        </div>
+      </div>
+
+      <div style="height: 40px;"></div>
+    </form>
+  </main>
+
+  <!-- Pinned Submit Bar -->
+  <div class="submit-bar">
+    <div class="submit-bar-inner">
+      <div class="price-summary">
+        <span class="price-summary-label" id="bottom-cat-name">Mengisi Form...</span>
+        <span class="price-summary-amount" id="bottom-cat-price">Rp 0</span>
+      </div>
+      <button type="submit" form="registration-form" class="submit-btn" id="btn-submit" disabled>
+        Daftar & Bayar
+        <i data-lucide="credit-card" style="width: 16px; height: 16px;"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Shared JS Modules -->
+  <script src="js/db.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    let category = null;
+
+    // Indonesian Regional Data Mock
+    const regionalData = {
+      "JAWA BARAT": {
+        "KAB. BANDUNG": {
+          "SOREANG": ["SOREANG", "CANGKUANG", "PAMEUNTASAN", "SEKARWANGI"],
+          "KUTAWARINGIN": ["KUTAWARINGIN", "JELEGONG", "CIBODAS", "KOPO", "PADAASIH"],
+          "PASIRJAMBU": ["PASIRJAMBU", "CIBODAS", "CISONDARI", "MEKARMAJU"]
+        },
+        "KOTA BANDUNG": {
+          "COBLONG": ["DAGO", "SILIWANGI", "SADANGSERANG", "SEKELOA"],
+          "LENGKONG": ["MALABAR", "BURANGRANG", "CIJAGRA", "TURANGGA"]
+        }
+      },
+      "DKI JAKARTA": {
+        "KOTA JAKARTA SELATAN": {
+          "KEBAYORAN BARU": ["SELOONG", "GUNUNG", "KRAMAT PELA", "GANDARIA UTARA"],
+          "CILANDAK": ["CILANDAK BARAT", "CIPETE SELATAN", "PONDOK LABU"]
+        }
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. Get Category from URL Query
+      const params = new URLSearchParams(window.location.search);
+      const catId = params.get('category');
+      
+      if (!catId) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // Find category
+      const categories = getCategories();
+      category = categories.find(c => c.id === catId);
+
+      if (!category) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // Check if category is already full
+      const avail = getCategoryAvailability(catId);
+      if (avail.available <= 0) {
+        showError("Kategori Penuh", "Kategori lari ini sudah kehabisan kuota slot. Silakan kembali dan pilih kategori lainnya.");
+        document.getElementById('btn-submit').disabled = true;
+      }
+
+      // Update UI with Category Details
+      document.getElementById('selected-category-id').value = category.id;
+      document.getElementById('nav-category-title').innerText = category.type;
+      document.getElementById('nav-category-price').innerText = `Kategori: ${category.distance} — Rp ${category.price.toLocaleString('id-ID')}`;
+      
+      document.getElementById('bottom-cat-name').innerText = `${category.distance} - ${category.type}`;
+      document.getElementById('bottom-cat-price').innerText = `Rp ${category.price.toLocaleString('id-ID')}`;
+
+      lucide.createIcons();
+    });
+
+    // Accordion handler
+    function toggleAccordion(id) {
+      const card = document.getElementById(id);
+      card.classList.toggle('open');
+    }
+
+    // Handles citizenship toggle
+    function handleCitizenshipChange(val) {
+      const wrap = document.getElementById('regional-wrap');
+      const prov = document.getElementById('alamat_provinsi');
+      const kab = document.getElementById('alamat_kabupaten');
+      const kec = document.getElementById('alamat_kecamatan');
+      const desa = document.getElementById('alamat_desa');
+
+      if (val === 'WNA') {
+        wrap.style.display = 'none';
+        prov.required = false;
+        kab.required = false;
+        kec.required = false;
+        desa.required = false;
+      } else {
+        wrap.style.display = 'block';
+        prov.required = true;
+        kab.required = true;
+        kec.required = true;
+        desa.required = true;
+      }
+    }
+
+    // Cascading dropdown handlers
+    function handleProvinsiChange(provName) {
+      const kabSelect = document.getElementById('alamat_kabupaten');
+      const kecSelect = document.getElementById('alamat_kecamatan');
+      const desaSelect = document.getElementById('alamat_desa');
+
+      // Reset subsequent selects
+      kabSelect.innerHTML = '<option value="" disabled selected>-- Pilih Kabupaten --</option>';
+      kecSelect.innerHTML = '<option value="" disabled selected>-- Pilih Kecamatan --</option>';
+      desaSelect.innerHTML = '<option value="" disabled selected>-- Pilih Desa --</option>';
+
+      kabSelect.disabled = true;
+      kecSelect.disabled = true;
+      desaSelect.disabled = true;
+
+      if (regionalData[provName]) {
+        kabSelect.disabled = false;
+        Object.keys(regionalData[provName]).forEach(kab => {
+          const opt = document.createElement('option');
+          opt.value = kab;
+          opt.innerText = kab;
+          kabSelect.appendChild(opt);
+        });
+      } else {
+        // Mock fallback for provinces not in DB
+        kabSelect.disabled = false;
+        const opt = document.createElement('option');
+        opt.value = `KAB. KOTA DI ${provName}`;
+        opt.innerText = `KAB. KOTA DI ${provName}`;
+        kabSelect.appendChild(opt);
+      }
+    }
+
+    function handleKabupatenChange(kabName) {
+      const provName = document.getElementById('alamat_provinsi').value;
+      const kecSelect = document.getElementById('alamat_kecamatan');
+      const desaSelect = document.getElementById('alamat_desa');
+
+      kecSelect.innerHTML = '<option value="" disabled selected>-- Pilih Kecamatan --</option>';
+      desaSelect.innerHTML = '<option value="" disabled selected>-- Pilih Desa --</option>';
+      kecSelect.disabled = true;
+      desaSelect.disabled = true;
+
+      if (regionalData[provName] && regionalData[provName][kabName]) {
+        kecSelect.disabled = false;
+        Object.keys(regionalData[provName][kabName]).forEach(kec => {
+          const opt = document.createElement('option');
+          opt.value = kec;
+          opt.innerText = kec;
+          kecSelect.appendChild(opt);
+        });
+      } else {
+        kecSelect.disabled = false;
+        const opt = document.createElement('option');
+        opt.value = "KECAMATAN CONTOH";
+        opt.innerText = "KECAMATAN CONTOH";
+        kecSelect.appendChild(opt);
+      }
+    }
+
+    function handleKecamatanChange(kecName) {
+      const provName = document.getElementById('alamat_provinsi').value;
+      const kabName = document.getElementById('alamat_kabupaten').value;
+      const desaSelect = document.getElementById('alamat_desa');
+
+      desaSelect.innerHTML = '<option value="" disabled selected>-- Pilih Desa --</option>';
+      desaSelect.disabled = true;
+
+      if (regionalData[provName] && regionalData[provName][kabName] && regionalData[provName][kabName][kecName]) {
+        desaSelect.disabled = false;
+        regionalData[provName][kabName][kecName].forEach(desa => {
+          const opt = document.createElement('option');
+          opt.value = desa;
+          opt.innerText = desa;
+          desaSelect.appendChild(opt);
+        });
+      } else {
+        desaSelect.disabled = false;
+        const opt = document.createElement('option');
+        opt.value = "DESA KELURAHAN CONTOH";
+        opt.innerText = "DESA KELURAHAN CONTOH";
+        desaSelect.appendChild(opt);
+      }
+    }
+
+    // Stylistic checkbox helper
+    function handleCheckboxToggle(chkId, itemId) {
+      const chk = document.getElementById(chkId);
+      const item = document.getElementById(itemId);
+      
+      // Let standard browser click handle checked toggling, we just sync visual class
+      setTimeout(() => {
+        if (chk.checked) {
+          item.classList.add('checked');
+        } else {
+          item.classList.remove('checked');
+        }
+        validateDeclarations();
+      }, 50);
+    }
+
+    // Enables/disables submit button based on terms checked
+    function validateDeclarations() {
+      const c1 = document.getElementById('chk-data-benar').checked;
+      const c2 = document.getElementById('chk-sehat').checked;
+      const c3 = document.getElementById('chk-tunduk').checked;
+      
+      const btn = document.getElementById('btn-submit');
+      
+      // Also verify overall form validity
+      const form = document.getElementById('registration-form');
+      const isFormValid = form.checkValidity();
+      
+      btn.disabled = !(c1 && c2 && c3);
+    }
+
+    // Handles form submission
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      
+      const form = document.getElementById('registration-form');
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      // Show loader overlay
+      document.getElementById('loading-overlay').style.display = 'flex';
+
+      // Read form data
+      const formData = new FormData(form);
+      const dataObj = {};
+      formData.forEach((value, key) => {
+        dataObj[key] = value;
+      });
+
+      // Format WNA Address Fields
+      if (dataObj.kewarganegaraan === 'WNA') {
+        dataObj.alamat_provinsi = 'WNA';
+        dataObj.alamat_kabupaten = 'WNA';
+        dataObj.alamat_kecamatan = 'WNA';
+        dataObj.alamat_desa = 'WNA';
+      }
+
+      // Simulate a small network delay
+      setTimeout(() => {
+        const result = createRegistration(dataObj);
+        document.getElementById('loading-overlay').style.display = 'none';
+
+        if (result.success) {
+          // Success: redirect to payment page
+          window.location.href = `bayar.html?id=${result.registration.id}`;
+        } else {
+          // Failure: Show error banner
+          showError("Pendaftaran Gagal", result.message, result.existingCode);
+        }
+      }, 1000);
+    }
+
+    function showError(title, message, code = null) {
+      const banner = document.getElementById('error-banner');
+      document.getElementById('error-title').innerText = title;
+      document.getElementById('error-message').innerText = message;
+      
+      const actionWrap = document.getElementById('error-action-wrap');
+      if (code) {
+        actionWrap.style.display = 'block';
+        // Add query to ticket check
+        document.getElementById('error-action-btn').href = `tiket.html?query=${code}`;
+      } else {
+        actionWrap.style.display = 'none';
+      }
+
+      banner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Make inputs trigger submit validation check on keypress
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+      el.addEventListener('change', validateDeclarations);
+      el.addEventListener('input', validateDeclarations);
+    });
+  </script>
+</body>
+</html>

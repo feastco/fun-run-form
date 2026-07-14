@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bandung Bedas Run 2026 — Pendaftaran Event</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div style="background-color: var(--primary-light); width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
+        <i data-lucide="award" style="color: var(--primary); width: 22px; height: 22px;"></i>
+      </div>
+      <div>
+        <div class="header-title">Bandung Bedas Run 2026</div>
+        <div class="header-subtitle">Official Registration Portal</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Content -->
+  <main class="page-container">
+
+    <!-- Event Banner -->
+    <div class="event-banner">
+      <div class="event-banner-tag">
+        <i data-lucide="zap" style="width: 12px; height: 12px; fill: currentColor;"></i> 
+        Open Registration
+      </div>
+      <h1>Bandung Bedas Run 2026</h1>
+      <div class="banner-meta">
+        <div class="banner-meta-item">
+          <i data-lucide="calendar" style="width: 16px; height: 16px;"></i>
+          <span>6 September 2026</span>
+        </div>
+        <div class="banner-meta-item">
+          <i data-lucide="clock" style="width: 16px; height: 16px;"></i>
+          <span id="deadline-text">Tutup: 17 Agu 2026</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Check Ticket Redirection -->
+    <a href="tiket.html" class="check-ticket-bar">
+      <span class="check-ticket-emoji">🎫</span>
+      <div class="check-ticket-body">
+        <div class="check-ticket-title">Sudah pernah mendaftar?</div>
+        <div class="check-ticket-sub">Cek status pendaftaran & unduh e-tiket Anda</div>
+      </div>
+      <i data-lucide="chevron-right" style="color: var(--text-muted); width: 20px; height: 20px;"></i>
+    </a>
+
+    <!-- Pricing Stage -->
+    <div class="stage-banner">
+      <span class="stage-icon">🏷️</span>
+      <div class="stage-info">
+        <div class="stage-label">Normal Price</div>
+        <div class="stage-sub">Harga standar pendaftaran event lari</div>
+      </div>
+    </div>
+
+    <!-- Category Selection Card -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon" style="background-color: var(--primary-light);">
+          <i data-lucide="tag" style="color: var(--primary);"></i>
+        </div>
+        <div>
+          <h2>Kategori Lomba</h2>
+          <p>Pilih salah satu kategori lari di bawah ini</p>
+        </div>
+      </div>
+      
+      <div class="card-body">
+        <!-- 5K Categories -->
+        <div style="margin-bottom: 24px;">
+          <div class="cat-split-label cat-5k-label" style="margin-bottom: 12px;">🏃 Kategori 5K — Rp 200.000</div>
+          <div class="field-group" id="grid-5k" style="gap: 10px;">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- 10K Categories -->
+        <div>
+          <div class="cat-split-label cat-10k-label" style="margin-bottom: 12px;">🏃 Kategori 10K — Rp 250.000</div>
+          <div class="field-group" id="grid-10k" style="gap: 10px;">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Pinned Submit Bar -->
+  <div class="submit-bar">
+    <div class="submit-bar-inner">
+      <div class="price-summary">
+        <span class="price-summary-label" id="summary-category-label">Pilih Kategori</span>
+        <span class="price-summary-amount" id="summary-price-label">Rp 0</span>
+      </div>
+      <button type="button" class="submit-btn" id="btn-next" disabled onclick="goToRegistration()">
+        Lanjut Isi Data
+        <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Shared JS Modules -->
+  <script src="js/db.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    let selectedCategoryId = null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderCategories();
+      lucide.createIcons();
+    });
+
+    function renderCategories() {
+      const categories = getCategories();
+      const grid5k = document.getElementById('grid-5k');
+      const grid10k = document.getElementById('grid-10k');
+      
+      grid5k.innerHTML = '';
+      grid10k.innerHTML = '';
+
+      categories.forEach(cat => {
+        // Calculate sisa slot
+        const avail = getCategoryAvailability(cat.id);
+        const isFull = avail.available <= 0;
+
+        const catEl = document.createElement('div');
+        catEl.className = `declaration-item ${isFull ? 'disabled' : ''}`;
+        catEl.style.border = '1px solid var(--border-color)';
+        catEl.style.borderRadius = '10px';
+        catEl.style.padding = '14px';
+        catEl.style.display = 'flex';
+        catEl.style.justifyContent = 'space-between';
+        catEl.style.alignItems = 'center';
+        catEl.style.cursor = isFull ? 'not-allowed' : 'pointer';
+        if (isFull) {
+          catEl.style.opacity = '0.6';
+          catEl.style.backgroundColor = '#F1F5F9';
+        }
+
+        // Left side content
+        const leftDiv = document.createElement('div');
+        leftDiv.innerHTML = `
+          <div style="font-weight: 700; font-size: 14px; color: var(--secondary);">${cat.type}</div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+            ${isFull ? '<span style="color: var(--danger); font-weight: 700;">Kuota Habis</span>' : `Sisa ${avail.available} / ${cat.quota} slot`}
+          </div>
+        `;
+
+        // Right side price & radio
+        const rightDiv = document.createElement('div');
+        rightDiv.style.display = 'flex';
+        rightDiv.style.alignItems = 'center';
+        rightDiv.style.gap = '12px';
+
+        const priceSpan = document.createElement('span');
+        priceSpan.style.fontSize = '14px';
+        priceSpan.style.fontWeight = '800';
+        priceSpan.style.color = 'var(--primary)';
+        priceSpan.innerText = `Rp ${cat.price.toLocaleString('id-ID')}`;
+
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'category_selection';
+        radio.value = cat.id;
+        radio.disabled = isFull;
+        radio.style.accentColor = 'var(--primary)';
+        radio.style.width = '18px';
+        radio.style.height = '18px';
+        radio.style.cursor = isFull ? 'not-allowed' : 'pointer';
+
+        rightDiv.appendChild(priceSpan);
+        rightDiv.appendChild(radio);
+
+        catEl.appendChild(leftDiv);
+        catEl.appendChild(rightDiv);
+
+        // Click handler to select
+        if (!isFull) {
+          catEl.addEventListener('click', () => {
+            selectCategory(cat.id, cat.type, cat.price, radio);
+          });
+          radio.addEventListener('click', (e) => {
+            e.stopPropagation(); // prevent double trigger
+            selectCategory(cat.id, cat.type, cat.price, radio);
+          });
+        }
+
+        if (cat.distance === '5K') {
+          grid5k.appendChild(catEl);
+        } else {
+          grid10k.appendChild(catEl);
+        }
+      });
+    }
+
+    function selectCategory(id, type, price, radioInput) {
+      // Clear previous selections visually
+      document.querySelectorAll('.declaration-item').forEach(el => {
+        el.classList.remove('checked');
+        const radio = el.querySelector('input[type="radio"]');
+        if (radio) radio.checked = false;
+      });
+
+      // Find parent element and check it
+      const parent = radioInput.closest('.declaration-item');
+      parent.classList.add('checked');
+      radioInput.checked = true;
+
+      selectedCategoryId = id;
+
+      // Update bottom bar
+      document.getElementById('summary-category-label').innerText = type;
+      document.getElementById('summary-price-label').innerText = `Rp ${price.toLocaleString('id-ID')}`;
+      document.getElementById('btn-next').disabled = false;
+    }
+
+    function goToRegistration() {
+      if (selectedCategoryId) {
+        window.location.href = `daftar.html?category=${selectedCategoryId}`;
+      }
+    }
+  </script>
+</body>
+</html>

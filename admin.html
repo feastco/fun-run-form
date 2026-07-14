@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Admin — Bandung Bedas Run 2026</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Styling extension for larger screen tables on Admin */
+    .admin-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px 16px;
+    }
+    .grid-admin-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    @media (min-width: 768px) {
+      .grid-admin-layout {
+        grid-template-columns: 280px 1fr;
+      }
+    }
+    .participant-row-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .participant-row-table th {
+      background-color: #F1F5F9;
+      color: var(--secondary);
+      font-weight: 700;
+      text-align: left;
+      padding: 10px;
+      border-bottom: 2px solid var(--border-color);
+    }
+    .participant-row-table td {
+      padding: 10px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .table-container {
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ADMIN LOGIN PANEL (Shown if not authenticated) -->
+  <div id="admin-login-view" style="display: flex; align-items: center; justify-content: center; min-height: 90vh;">
+    <div class="card" style="max-width: 400px; width: 100%; margin: 16px;">
+      <div class="card-header" style="text-align: center; justify-content: center; flex-direction: column; align-items: center; gap: 8px;">
+        <div style="background-color: var(--secondary); width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+          <i data-lucide="lock" style="color: #FFFFFF; width: 24px; height: 24px;"></i>
+        </div>
+        <h2 style="margin-top: 8px;">Login Admin Portal</h2>
+        <p>Gunakan password portal admin untuk masuk</p>
+      </div>
+      <div class="card-body">
+        <form onsubmit="handleAdminLogin(event)">
+          <div class="field" style="margin-bottom: 16px;">
+            <label for="admin_password">Password Admin <span class="req">*</span></label>
+            <input type="password" id="admin_password" required placeholder="Masukkan password admin">
+            <span class="field-hint">Petunjuk prototype: Gunakan password <strong>admin123</strong></span>
+          </div>
+          <button type="submit" class="submit-btn" style="width: 100%; justify-content: center;">
+            Masuk ke Dashboard
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN CONTENT VIEW (Shown if authenticated) -->
+  <div id="admin-dashboard-view" style="display: none;">
+    <!-- Admin Nav -->
+    <nav class="admin-navbar">
+      <div class="admin-title">
+        <i data-lucide="shield" style="color: var(--primary);"></i>
+        <span>Admin Bedas Run 2026</span>
+      </div>
+      <button class="admin-logout" onclick="handleAdminLogout()">
+        <i data-lucide="log-out" style="width: 13px; height: 13px; display: inline-block; vertical-align: text-bottom; margin-right: 4px;"></i>
+        Keluar
+      </button>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="admin-container">
+      
+      <!-- Stats Summary -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-total-paid">0</div>
+          <div class="stat-label">Terbayar (Lunas)</div>
+        </div>
+        <div class="stat-card" style="border-left: 3px solid var(--primary);">
+          <div class="stat-num" id="stat-revenue" style="color: var(--primary);">Rp 0</div>
+          <div class="stat-label">Total Pendapatan</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-total-pending">0</div>
+          <div class="stat-label">Menunggu Bayar</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-total-registrations">0</div>
+          <div class="stat-label">Total Pengajuan</div>
+        </div>
+      </div>
+
+      <!-- Grid Layout for Quota Editor and Registrations List -->
+      <div class="grid-admin-layout">
+        
+        <!-- SIDEBAR: Quota Editor -->
+        <div>
+          <div class="card">
+            <div class="card-header" style="padding: 14px 16px;">
+              <div class="card-header-icon" style="background-color: var(--primary-light);">
+                <i data-lucide="sliders" style="color: var(--primary); width: 16px; height: 16px;"></i>
+              </div>
+              <div>
+                <h2 style="font-size: 14px;">Edit Kuota Lomba</h2>
+                <p style="font-size: 11px;">Update kuota kategori real-time</p>
+              </div>
+            </div>
+            <div class="card-body" style="padding: 14px;" id="quota-editor-list">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- MAIN SECTION: Participant List -->
+        <div>
+          <div class="card">
+            <div class="card-header" style="padding: 16px 20px;">
+              <div class="card-header-icon" style="background-color: #F0F9FF;">
+                <i data-lucide="users" style="color: #0284C7;"></i>
+              </div>
+              <div style="flex: 1;">
+                <h2>Daftar Peserta Registrasi</h2>
+                <p>Kelola data registrasi peserta lomba</p>
+              </div>
+              <button class="btn-secondary" onclick="exportToCSV()">
+                <i data-lucide="download" style="width: 14px; height: 14px;"></i>
+                Ekspor Excel (CSV)
+              </button>
+            </div>
+            <div class="card-body" style="padding: 16px;">
+              
+              <!-- Search & Filters -->
+              <div class="action-row">
+                <input type="text" class="admin-search" id="admin-search-input" placeholder="Cari Nama, NIK, WhatsApp, No. Registrasi..." oninput="filterParticipants()">
+                
+                <select id="filter-category" style="padding: 8px 10px; font-size: 12px; border-radius: 8px; border: 1.5px solid var(--border-color); outline: none;" onchange="filterParticipants()">
+                  <option value="">Semua Kategori</option>
+                  <!-- Render options in JS -->
+                </select>
+
+                <select id="filter-status" style="padding: 8px 10px; font-size: 12px; border-radius: 8px; border: 1.5px solid var(--border-color); outline: none;" onchange="filterParticipants()">
+                  <option value="">Semua Status</option>
+                  <option value="paid">PAID (Lunas)</option>
+                  <option value="pending">PENDING</option>
+                  <option value="expired">EXPIRED</option>
+                </select>
+              </div>
+
+              <!-- Participants List / Table -->
+              <div id="no-participants" style="display: none; text-align: center; padding: 30px; color: var(--text-muted); font-size: 14px;">
+                Tidak ada peserta terdaftar yang cocok dengan filter.
+              </div>
+
+              <div class="table-container" id="participants-table-wrap">
+                <table class="participant-row-table">
+                  <thead>
+                    <tr>
+                      <th>Kode</th>
+                      <th>Nama Peserta</th>
+                      <th>Kategori</th>
+                      <th>Status</th>
+                      <th>Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="participants-list-body">
+                    <!-- Rendered by JS -->
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PARTICIPANT DETAIL MODAL -->
+  <div class="modal-overlay" id="detail-modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title-code">Detail Registrasi - BDR-26-0000</h3>
+        <button class="modal-close" onclick="closeModal()">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+      <div class="modal-body" style="padding: 20px 24px;">
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          
+          <!-- Registration Info Section -->
+          <div>
+            <h4 style="font-size: 12px; text-transform: uppercase; color: var(--primary); letter-spacing: 0.05em; font-weight: 800; border-bottom: 1px solid var(--border-color); padding-bottom: 4px; margin-bottom: 8px;">Status Registrasi</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <div>Status: <span id="modal-status">-</span></div>
+              <div>Order ID: <span id="modal-orderid" style="font-family: monospace;">-</span></div>
+              <div>Dibuat: <span id="modal-createdat">-</span></div>
+              <div>Dibayar: <span id="modal-paidat">-</span></div>
+            </div>
+          </div>
+
+          <!-- Personal Data Section -->
+          <div>
+            <h4 style="font-size: 12px; text-transform: uppercase; color: var(--primary); letter-spacing: 0.05em; font-weight: 800; border-bottom: 1px solid var(--border-color); padding-bottom: 4px; margin-bottom: 8px;">Data Diri & Alamat</h4>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div>Nama Lengkap: <strong id="modal-name">-</strong></div>
+              <div>NIK: <span id="modal-nik" style="font-family: monospace;">-</span></div>
+              <div>WhatsApp: <span id="modal-phone">-</span></div>
+              <div>Email: <span id="modal-email">-</span></div>
+              <div>Gender / TTL: <span id="modal-ttl">-</span></div>
+              <div>Kewarganegaraan: <span id="modal-citizenship">-</span></div>
+              <div>Alamat Regional: <span id="modal-regional">-</span></div>
+              <div>Detail Alamat: <span id="modal-address">-</span></div>
+            </div>
+          </div>
+
+          <!-- Shirt Size & Health Details -->
+          <div>
+            <h4 style="font-size: 12px; text-transform: uppercase; color: var(--primary); letter-spacing: 0.05em; font-weight: 800; border-bottom: 1px solid var(--border-color); padding-bottom: 4px; margin-bottom: 8px;">Kaos & Informasi Kesehatan</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <div>Ukuran Kaos: <strong id="modal-shirt">-</strong></div>
+              <div>Golongan Darah: <strong id="modal-blood">-</strong></div>
+              <div style="grid-column: span 2;">Riwayat Penyakit: <span id="modal-disease">-</span></div>
+              <div>Kontak Darurat: <span id="modal-emergency-name">-</span></div>
+              <div>Relasi Kontak: <span id="modal-emergency-rel">-</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div style="padding: 16px 24px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; background-color: #F8FAFC;">
+        <button class="btn-secondary" onclick="closeModal()">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared JS Modules -->
+  <script src="js/db.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    let currentFilterParticipants = [];
+
+    window.addEventListener('DOMContentLoaded', () => {
+      checkAuth();
+      lucide.createIcons();
+    });
+
+    // Check if admin is authenticated
+    function checkAuth() {
+      const isLoggedIn = localStorage.getItem(DB_KEYS.ADMIN_LOGGED_IN) === 'true';
+      if (isLoggedIn) {
+        document.getElementById('admin-login-view').style.display = 'none';
+        document.getElementById('admin-dashboard-view').style.display = 'block';
+        loadDashboardData();
+      } else {
+        document.getElementById('admin-dashboard-view').style.display = 'none';
+        document.getElementById('admin-login-view').style.display = 'flex';
+      }
+    }
+
+    // Handle Admin Login
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const pw = document.getElementById('admin_password').value;
+      
+      if (pw === 'admin123') {
+        localStorage.setItem(DB_KEYS.ADMIN_LOGGED_IN, 'true');
+        checkAuth();
+      } else {
+        alert("Password admin salah!");
+      }
+    }
+
+    // Handle Logout
+    function handleAdminLogout() {
+      localStorage.removeItem(DB_KEYS.ADMIN_LOGGED_IN);
+      checkAuth();
+    }
+
+    // Load Stats, Quota Editor, and Participants list
+    function loadDashboardData() {
+      // 1. Stats Counters
+      const registrations = getRegistrations();
+      const paidRegs = registrations.filter(r => r.status === 'paid');
+      const pendingRegs = registrations.filter(r => r.status === 'pending');
+      
+      const totalPaid = paidRegs.length;
+      const totalPending = pendingRegs.length;
+      
+      // Calculate revenue
+      const categories = getCategories();
+      let revenue = 0;
+      paidRegs.forEach(r => {
+        const cat = categories.find(c => c.id === r.category_id);
+        if (cat) revenue += cat.price;
+      });
+
+      document.getElementById('stat-total-paid').innerText = totalPaid;
+      document.getElementById('stat-revenue').innerText = `Rp ${revenue.toLocaleString('id-ID')}`;
+      document.getElementById('stat-total-pending').innerText = totalPending;
+      document.getElementById('stat-total-registrations').innerText = registrations.length;
+
+      // 2. Render Quota Editor List
+      renderQuotaEditor();
+
+      // 3. Render Category dropdown filters
+      renderCategoryDropdownFilter();
+
+      // 4. Load Participant list
+      currentFilterParticipants = registrations;
+      renderParticipantList();
+    }
+
+    // Render Quota editing rows
+    function renderQuotaEditor() {
+      const categories = getCategories();
+      const listContainer = document.getElementById('quota-editor-list');
+      listContainer.innerHTML = '';
+
+      categories.forEach(cat => {
+        const avail = getCategoryAvailability(cat.id);
+        
+        const row = document.createElement('div');
+        row.className = 'quota-item-row';
+        row.innerHTML = `
+          <div class="quota-item-info">
+            <span class="quota-item-name">${cat.type} (${cat.distance})</span>
+            <span class="quota-item-count">Terbayar: ${avail.reserved} / Kuota: ${cat.quota}</span>
+          </div>
+          <div class="quota-item-input-wrap">
+            <input type="number" class="quota-input" id="input-quota-${cat.id}" value="${cat.quota}" min="${avail.reserved}">
+            <button class="btn-secondary" style="padding: 6px 10px; font-size: 11px;" onclick="saveQuota('${cat.id}')">Simpan</button>
+          </div>
+        `;
+        listContainer.appendChild(row);
+      });
+    }
+
+    // Save individual category quota
+    function saveQuota(catId) {
+      const val = document.getElementById(`input-quota-${catId}`).value;
+      const parsedVal = parseInt(val);
+
+      if (isNaN(parsedVal) || parsedVal < 0) {
+        alert("Masukkan kuota yang valid.");
+        return;
+      }
+
+      // Check if trying to set quota lower than actual booked spots
+      const avail = getCategoryAvailability(catId);
+      if (parsedVal < avail.reserved) {
+        alert(`Kuota tidak boleh lebih kecil dari jumlah tiket lunas/terdaftar (${avail.reserved} slot).`);
+        return;
+      }
+
+      updateCategoryQuota(catId, parsedVal);
+      alert("Kuota kategori berhasil diperbarui!");
+      loadDashboardData();
+    }
+
+    // Render category filters
+    function renderCategoryDropdownFilter() {
+      const categories = getCategories();
+      const filterSelect = document.getElementById('filter-category');
+      
+      // Preserve first option
+      filterSelect.innerHTML = '<option value="">Semua Kategori</option>';
+      categories.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat.id;
+        opt.innerText = `${cat.distance} — ${cat.type}`;
+        filterSelect.appendChild(opt);
+      });
+    }
+
+    // Render participant rows in table
+    function renderParticipantList() {
+      const listBody = document.getElementById('participants-list-body');
+      const noResults = document.getElementById('no-participants');
+      const tableWrap = document.getElementById('participants-table-wrap');
+      
+      listBody.innerHTML = '';
+      
+      if (currentFilterParticipants.length === 0) {
+        noResults.style.display = 'block';
+        tableWrap.style.display = 'none';
+        return;
+      }
+
+      noResults.style.display = 'none';
+      tableWrap.style.display = 'block';
+
+      const categories = getCategories();
+
+      currentFilterParticipants.forEach(reg => {
+        const cat = categories.find(c => c.id === reg.category_id);
+        const catName = cat ? `${cat.distance} - ${cat.type}` : 'Unknown';
+
+        // Badge class
+        let badgeClass = 'badge-pending';
+        if (reg.status === 'paid') badgeClass = 'badge-paid';
+        if (reg.status === 'expired') badgeClass = 'badge-expired';
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td style="font-family: monospace; font-weight: 700;">${reg.registration_code}</td>
+          <td>
+            <div style="font-weight: 700; color: var(--secondary);">${reg.buyer_name}</div>
+            <div style="font-size: 11px; color: var(--text-muted);">${reg.buyer_email} | ${reg.buyer_phone}</div>
+          </td>
+          <td>${catName}</td>
+          <td>
+            <span class="badge ${badgeClass}">${reg.status}</span>
+          </td>
+          <td>
+            <button class="btn-secondary" style="padding: 4px 8px; font-size: 11px;" onclick="openDetails('${reg.id}')">
+              <i data-lucide="eye" style="width: 12px; height: 12px; display: inline-block; vertical-align: text-bottom;"></i>
+              Rincian
+            </button>
+          </td>
+        `;
+        listBody.appendChild(row);
+      });
+
+      lucide.createIcons();
+    }
+
+    // Filter participants based on search query, category selection, and status dropdowns
+    function filterParticipants() {
+      const query = document.getElementById('admin-search-input').value.toLowerCase().trim();
+      const catId = document.getElementById('filter-category').value;
+      const status = document.getElementById('filter-status').value;
+
+      const allRegs = getRegistrations();
+
+      currentFilterParticipants = allRegs.filter(reg => {
+        // Query search
+        const matchQuery = !query || 
+          reg.buyer_name.toLowerCase().includes(query) ||
+          reg.registration_code.toLowerCase().includes(query) ||
+          reg.nik.includes(query) ||
+          reg.buyer_phone.includes(query) ||
+          reg.buyer_email.toLowerCase().includes(query);
+
+        // Category filter
+        const matchCat = !catId || reg.category_id === catId;
+
+        // Status filter
+        const matchStatus = !status || reg.status === status;
+
+        return matchQuery && matchCat && matchStatus;
+      });
+
+      renderParticipantList();
+    }
+
+    // Open detail modal
+    function openDetails(regId) {
+      const reg = getRegistrations().find(r => r.id === regId);
+      if (!reg) return;
+
+      const categories = getCategories();
+      const cat = categories.find(c => c.id === reg.category_id);
+
+      document.getElementById('modal-title-code').innerText = `Detail Registrasi - ${reg.registration_code}`;
+      
+      // Status & dates
+      let badgeClass = 'badge-pending';
+      if (reg.status === 'paid') badgeClass = 'badge-paid';
+      if (reg.status === 'expired') badgeClass = 'badge-expired';
+      
+      document.getElementById('modal-status').innerHTML = `<span class="badge ${badgeClass}">${reg.status.toUpperCase()}</span>`;
+      document.getElementById('modal-orderid').innerText = reg.order_id;
+      document.getElementById('modal-createdat').innerText = new Date(reg.created_at).toLocaleString('id-ID');
+      document.getElementById('modal-paidat').innerText = reg.paid_at ? new Date(reg.paid_at).toLocaleString('id-ID') : 'Belum Lunas';
+
+      // Personal details
+      document.getElementById('modal-name').innerText = reg.buyer_name;
+      document.getElementById('modal-nik').innerText = reg.nik;
+      document.getElementById('modal-phone').innerText = reg.buyer_phone;
+      document.getElementById('modal-email').innerText = reg.buyer_email;
+      document.getElementById('modal-ttl').innerText = `${reg.tempat_lahir}, ${new Date(reg.tanggal_lahir).toLocaleDateString('id-ID')}`;
+      document.getElementById('modal-citizenship').innerText = reg.kewarganegaraan;
+      
+      if (reg.kewarganegaraan === 'WNA') {
+        document.getElementById('modal-regional').innerText = 'Warga Negara Asing';
+      } else {
+        document.getElementById('modal-regional').innerText = `${reg.alamat_provinsi} > ${reg.alamat_kabupaten} > ${reg.alamat_kecamatan} > ${reg.alamat_desa}`;
+      }
+      document.getElementById('modal-address').innerText = reg.alamat_detail || 'Tidak Ada';
+
+      // Medical & shirt
+      document.getElementById('modal-shirt').innerText = reg.ukuran_kaos;
+      document.getElementById('modal-blood').innerText = reg.golongan_darah;
+      document.getElementById('modal-disease').innerText = reg.riwayat_penyakit || '-';
+      document.getElementById('modal-emergency-name').innerText = reg.kontak_darurat;
+      document.getElementById('modal-emergency-rel').innerText = reg.relasi_kontak_darurat;
+
+      // Show modal
+      document.getElementById('detail-modal').style.display = 'flex';
+      lucide.createIcons();
+    }
+
+    function closeModal() {
+      document.getElementById('detail-modal').style.display = 'none';
+    }
+
+    // Export to Excel-compatible CSV file
+    function exportToCSV() {
+      const registrations = getRegistrations();
+      if (registrations.length === 0) {
+        alert("Tidak ada data peserta untuk diekspor.");
+        return;
+      }
+
+      const categories = getCategories();
+
+      // Headers matching columns
+      const headers = [
+        "Kode Registrasi", "Order ID", "Status", "Nama Lengkap", "Kategori Lomba", 
+        "Harga", "WhatsApp", "Email", "NIK (KTP)", "Jenis Kelamin", 
+        "Tempat Lahir", "Tanggal Lahir", "Instansi/Komunitas", "Kewarganegaraan", 
+        "Provinsi", "Kabupaten", "Kecamatan", "Desa/Kelurahan", "Alamat Lengkap",
+        "Ukuran Kaos", "Golongan Darah", "Riwayat Penyakit", "Kontak Darurat", "Relasi Kontak",
+        "Waktu Daftar", "Waktu Bayar"
+      ];
+
+      // Build rows
+      const rows = registrations.map(reg => {
+        const cat = categories.find(c => c.id === reg.category_id);
+        const catName = cat ? `${cat.distance} - ${cat.type}` : 'Unknown';
+        const price = cat ? cat.price : 0;
+        
+        return [
+          reg.registration_code,
+          reg.order_id,
+          reg.status,
+          `"${reg.buyer_name.replace(/"/g, '""')}"`,
+          `"${catName}"`,
+          price,
+          `'${reg.buyer_phone}`, // Prefix with quote so Excel displays WhatsApp as text
+          reg.buyer_email,
+          `'${reg.nik}`, // Prefix with quote so Excel doesn't truncate NIK
+          reg.jenis_kelamin,
+          reg.tempat_lahir,
+          reg.tanggal_lahir,
+          `"${(reg.nama_instansi || '').replace(/"/g, '""')}"`,
+          reg.kewarganegaraan,
+          reg.alamat_provinsi || '',
+          reg.alamat_kabupaten || '',
+          reg.alamat_kecamatan || '',
+          reg.alamat_desa || '',
+          `"${(reg.alamat_detail || '').replace(/"/g, '""')}"`,
+          reg.ukuran_kaos,
+          reg.golongan_darah,
+          `"${(reg.riwayat_penyakit || '').replace(/"/g, '""')}"`,
+          `"${reg.kontak_darurat.replace(/"/g, '""')}"`,
+          `"${reg.relasi_kontak_darurat.replace(/"/g, '""')}"`,
+          reg.created_at,
+          reg.paid_at || ''
+        ];
+      });
+
+      // Join CSV text
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += headers.join(",") + "\n";
+      rows.forEach(row => {
+        csvContent += row.join(",") + "\n";
+      });
+
+      // Create download trigger
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      
+      const dateStr = new Date().toISOString().substring(0, 10);
+      link.setAttribute("download", `bedas_run_pendaftar_${dateStr}.csv`);
+      document.body.appendChild(link);
+      
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>

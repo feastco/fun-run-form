@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pembayaran Registrasi — Bandung Bedas Run 2026</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Payment simulator specific style details */
+    .pay-methods {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .pay-method-item {
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .pay-method-item:hover {
+      border-color: var(--primary);
+      background-color: var(--bg-page);
+    }
+    .pay-method-item.active {
+      border-color: var(--primary);
+      background-color: var(--primary-light);
+    }
+    .payment-area {
+      border-top: 1px solid var(--border-color);
+      padding-top: 20px;
+      margin-top: 20px;
+      display: none;
+    }
+    .simulator-drawer {
+      margin-top: 30px;
+      background-color: #F1F5F9;
+      border: 1.5px dashed #94A3B8;
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+    .countdown-timer {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--danger);
+      font-family: monospace;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="header-inner" style="justify-content: center;">
+      <div class="header-title">Gerbang Pembayaran Aman</div>
+    </div>
+  </header>
+
+  <main class="page-container" style="padding-bottom: 40px;">
+    
+    <!-- Timer & Amount Status Card -->
+    <div class="card" style="text-align: center;">
+      <div class="card-body" style="padding: 24px;">
+        <span class="price-summary-label" style="font-size: 12px;">Selesaikan Pembayaran Dalam</span>
+        <div class="countdown-timer" id="timer">14:59</div>
+        
+        <div style="margin: 20px 0; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 14px 0;">
+          <div style="font-size: 13px; color: var(--text-muted); font-weight: 600;">Jumlah yang Harus Dibayar</div>
+          <div style="font-size: 28px; font-weight: 800; color: var(--secondary); margin-top: 4px;" id="total-amount">Rp -</div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted);">
+          <span>No. Registrasi: <strong style="color: var(--secondary);" id="reg-code">-</strong></span>
+          <span>Order ID: <strong style="color: var(--secondary);" id="order-id">-</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Registration Details Card -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon" style="background-color: #E2E8F0;">
+          <i data-lucide="receipt" style="color: var(--secondary);"></i>
+        </div>
+        <div>
+          <h2>Rincian Peserta</h2>
+          <p>Konfirmasi data pendaftaran lari</p>
+        </div>
+      </div>
+      <div class="card-body" style="padding: 16px 20px;">
+        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px;">
+          <div style="display: flex; justify-content: space-between;"><span class="participant-lbl">Nama Lengkap</span><span class="participant-val" id="detail-name">-</span></div>
+          <div style="display: flex; justify-content: space-between;"><span class="participant-lbl">Kategori Lari</span><span class="participant-val" id="detail-category">-</span></div>
+          <div style="display: flex; justify-content: space-between;"><span class="participant-lbl">No. WhatsApp</span><span class="participant-val" id="detail-phone">-</span></div>
+          <div style="display: flex; justify-content: space-between;"><span class="participant-lbl">Email</span><span class="participant-val" id="detail-email">-</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Methods Selection Card -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon" style="background-color: var(--primary-light);">
+          <i data-lucide="wallet" style="color: var(--primary);"></i>
+        </div>
+        <div>
+          <h2>Metode Pembayaran</h2>
+          <p>Pilih metode bayar via QRIS atau Virtual Account</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="pay-methods">
+          <!-- QRIS Option -->
+          <div class="pay-method-item" id="pay-qris" onclick="selectPayMethod('qris')">
+            <div style="background-color: #EEF2FF; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+              <i data-lucide="qr-code" style="color: #4F46E5;"></i>
+            </div>
+            <div style="flex: 1;">
+              <div style="font-weight: 700; font-size: 14px; color: var(--secondary);">QRIS (Otomatis)</div>
+              <div style="font-size: 11px; color: var(--text-muted);">Gopay, ShopeePay, OVO, Dana, LinkAja, & Mobile Banking</div>
+            </div>
+            <i data-lucide="chevron-right" style="color: var(--text-muted); width: 16px; height: 16px;"></i>
+          </div>
+
+          <!-- VA Option -->
+          <div class="pay-method-item" id="pay-va" onclick="selectPayMethod('va')">
+            <div style="background-color: #ECFDF5; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+              <i data-lucide="landmark" style="color: #059669;"></i>
+            </div>
+            <div style="flex: 1;">
+              <div style="font-weight: 700; font-size: 14px; color: var(--secondary);">Virtual Account (Transfer Bank)</div>
+              <div style="font-size: 11px; color: var(--text-muted);">BCA, Mandiri, BNI, BRI, Permata</div>
+            </div>
+            <i data-lucide="chevron-right" style="color: var(--text-muted); width: 16px; height: 16px;"></i>
+          </div>
+        </div>
+
+        <!-- Rendered Instructions -->
+        <div class="payment-area" id="area-qris">
+          <div style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+            <div style="font-weight: 700; font-size: 13px;">Pindai Kode QRIS di bawah ini:</div>
+            <!-- Mock QR code -->
+            <div style="background-color: #FFFFFF; padding: 14px; border: 1.5px solid var(--border-color); border-radius: 12px; width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; position: relative;">
+              <!-- Simple SVG representation of QR code with standard lines -->
+              <svg width="150" height="150" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Squares -->
+                <rect x="0" y="0" width="40" height="40" stroke="#1A1A2E" stroke-width="8"/>
+                <rect x="10" y="10" width="20" height="20" fill="#FF4D00"/>
+                <rect x="110" y="0" width="40" height="40" stroke="#1A1A2E" stroke-width="8"/>
+                <rect x="120" y="10" width="20" height="20" fill="#FF4D00"/>
+                <rect x="0" y="110" width="40" height="40" stroke="#1A1A2E" stroke-width="8"/>
+                <rect x="10" y="120" width="20" height="20" fill="#FF4D00"/>
+                <!-- Dots/Random paths -->
+                <rect x="50" y="10" width="10" height="30" fill="#1A1A2E"/>
+                <rect x="70" y="0" width="20" height="10" fill="#1A1A2E"/>
+                <rect x="50" y="60" width="40" height="10" fill="#FF4D00"/>
+                <rect x="10" y="50" width="30" height="10" fill="#1A1A2E"/>
+                <rect x="100" y="50" width="10" height="40" fill="#1A1A2E"/>
+                <rect x="50" y="90" width="20" height="30" fill="#1A1A2E"/>
+                <rect x="120" y="90" width="30" height="10" fill="#1A1A2E"/>
+                <rect x="80" y="120" width="50" height="20" fill="#FF4D00"/>
+                <rect x="65" y="65" width="20" height="20" fill="#1A1A2E"/>
+              </svg>
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted); line-height: 1.5; max-width: 320px;">
+              Buka aplikasi e-wallet Anda (Gopay, OVO, Dana, LinkAja) atau banking app, lalu pilih scan/pindai QR code ini.
+            </div>
+          </div>
+        </div>
+
+        <div class="payment-area" id="area-va">
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <div style="font-weight: 700; font-size: 13px;">Petunjuk Transfer Virtual Account (VA):</div>
+            
+            <div style="background-color: var(--bg-page); border: 1px solid var(--border-color); padding: 14px; border-radius: 8px;">
+              <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Bank Tujuan</div>
+              <div style="font-size: 15px; font-weight: 800; color: var(--secondary); margin-top: 2px;">BCA Virtual Account</div>
+              
+              <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-top: 12px;">Nomor Virtual Account</div>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
+                <span style="font-size: 18px; font-weight: 800; color: var(--primary); font-family: monospace;" id="va-number">8801281234567890</span>
+                <button type="button" class="btn-secondary" style="padding: 4px 8px; font-size: 11px;" onclick="copyVA()">Salin</button>
+              </div>
+            </div>
+
+            <div style="font-size: 11px; color: var(--text-muted); line-height: 1.6;">
+              <strong>Cara Pembayaran:</strong>
+              <ol style="margin-left: 14px; margin-top: 4px;">
+                <li>Masukkan kartu ATM BCA atau login ke m-BCA Anda.</li>
+                <li>Pilih menu <strong>Transfer > Ke Rekening BCA Virtual Account</strong>.</li>
+                <li>Masukkan nomor VA di atas. Jumlah tagihan akan terdeteksi otomatis.</li>
+                <li>Konfirmasi transaksi dan simpan bukti transfer Anda.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Webhook Simulator Card (Developer Panel) -->
+    <div class="simulator-drawer">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+        <i data-lucide="cpu" style="color: var(--text-muted); width: 18px; height: 18px;"></i>
+        <h3 style="font-size: 13px; font-weight: 800; color: var(--secondary);">🔧 Webhook Simulator (Untuk Uji Coba)</h3>
+      </div>
+      <p style="font-size: 11px; color: var(--text-muted); line-height: 1.4; margin-bottom: 14px;">
+        Sistem ini menggunakan simulasi transaksi. Klik tombol di bawah untuk mengirimkan sinyal webhook pembayaran sukses atau expired ke sistem database lokal (localStorage).
+      </p>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button type="button" class="submit-btn" style="background-color: var(--success); box-shadow: none; justify-content: center; font-size: 13px;" onclick="simulateWebhook('success')">
+          <i data-lucide="check-circle" style="width: 16px; height: 16px;"></i>
+          Simulasikan Pembayaran Sukses (Paid)
+        </button>
+        <button type="button" class="btn-secondary" style="background-color: var(--danger-light); color: var(--danger); border-color: var(--danger); justify-content: center; font-size: 13px;" onclick="simulateWebhook('expired')">
+          <i data-lucide="alert-octagon" style="width: 16px; height: 16px;"></i>
+          Simulasikan Waktu Habis (Expired)
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Shared JS Modules -->
+  <script src="js/db.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    let registration = null;
+    let timerInterval = null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. Get Registration ID from URL
+      const params = new URLSearchParams(window.location.search);
+      const regId = params.get('id');
+
+      if (!regId) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // Check and update expired status first
+      checkAndReleaseExpired();
+
+      // Find registration
+      const registrations = getRegistrations();
+      registration = registrations.find(r => r.id === regId);
+
+      if (!registration) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // If already paid, redirect to ticket page
+      if (registration.status === 'paid') {
+        window.location.href = `tiket.html?id=${registration.id}`;
+        return;
+      }
+
+      // If expired, show warning
+      if (registration.status === 'expired') {
+        alert("Transaksi pembayaran Anda sudah kadaluarsa (expired) dan kuota slot dikembalikan.");
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // Update UI Details
+      const category = getCategories().find(c => c.id === registration.category_id);
+      
+      document.getElementById('total-amount').innerText = `Rp ${category.price.toLocaleString('id-ID')}`;
+      document.getElementById('reg-code').innerText = registration.registration_code;
+      document.getElementById('order-id').innerText = registration.order_id;
+      
+      document.getElementById('detail-name').innerText = registration.buyer_name;
+      document.getElementById('detail-category').innerText = `${category.distance} — ${category.type}`;
+      document.getElementById('detail-phone').innerText = registration.buyer_phone;
+      document.getElementById('detail-email').innerText = registration.buyer_email;
+
+      // Mock VA Number generation based on WhatsApp/code
+      document.getElementById('va-number').innerText = `88012${registration.buyer_phone.replace(/\D/g, '').substring(0, 11).padStart(11, '0')}`;
+
+      // Start Countdown Timer
+      startTimer(new Date(registration.expired_at));
+
+      // Open QRIS by default
+      selectPayMethod('qris');
+
+      lucide.createIcons();
+    });
+
+    // Pay method toggling
+    function selectPayMethod(method) {
+      document.querySelectorAll('.pay-method-item').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.payment-area').forEach(el => el.style.display = 'none');
+
+      if (method === 'qris') {
+        document.getElementById('pay-qris').classList.add('active');
+        document.getElementById('area-qris').style.display = 'block';
+      } else if (method === 'va') {
+        document.getElementById('pay-va').classList.add('active');
+        document.getElementById('area-va').style.display = 'block';
+      }
+    }
+
+    // Countdown Timer logic
+    function startTimer(expiryDate) {
+      const timerEl = document.getElementById('timer');
+
+      function update() {
+        const now = new Date();
+        const diff = expiryDate - now;
+
+        if (diff <= 0) {
+          clearInterval(timerInterval);
+          timerEl.innerText = "00:00";
+          timerEl.style.color = "var(--danger)";
+          
+          // Trigger automatic status update to expired
+          updateRegistrationStatus(registration.id, 'expired');
+          alert("Waktu transaksi habis. Kuota slot dibebaskan otomatis.");
+          window.location.href = 'index.html';
+          return;
+        }
+
+        const min = Math.floor(diff / 60000);
+        const sec = Math.floor((diff % 60000) / 1000);
+
+        timerEl.innerText = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+      }
+
+      update();
+      timerInterval = setInterval(update, 1000);
+    }
+
+    // Copy Virtual Account number
+    function copyVA() {
+      const vaNum = document.getElementById('va-number').innerText;
+      navigator.clipboard.writeText(vaNum).then(() => {
+        alert("Nomor Virtual Account disalin ke clipboard!");
+      });
+    }
+
+    // Webhook simulation handler
+    function simulateWebhook(action) {
+      clearInterval(timerInterval);
+      
+      if (action === 'success') {
+        // Send success update to DB
+        updateRegistrationStatus(registration.id, 'paid');
+        alert("Simulasi Pembayaran Berhasil! Status registrasi Anda kini 'paid' (lunas resmi).");
+        window.location.href = `tiket.html?id=${registration.id}`;
+      } else if (action === 'expired') {
+        // Send expired update to DB
+        updateRegistrationStatus(registration.id, 'expired');
+        alert("Simulasi Waktu Habis! Slot kuota dibebaskan dan status berubah menjadi 'expired'.");
+        window.location.href = 'index.html';
+      }
+    }
+  </script>
+</body>
+</html>

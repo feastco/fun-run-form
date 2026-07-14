@@ -1,0 +1,8 @@
+# Agent-related folders
+.agents/
+.playwright-mcp/
+.superpowers/
+
+# OS specific files
+.DS_Store
+Thumbs.db

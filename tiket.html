@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Tiket & Status Pendaftaran — Bandung Bedas Run 2026</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Styling to make E-ticket beautiful */
+    @media print {
+      body {
+        background-color: #FFFFFF;
+      }
+      .app-header, .submit-bar, .no-print, .search-container, .back-to-home {
+        display: none !important;
+      }
+      .page-container {
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+      }
+      .ticket-wrapper {
+        box-shadow: none !important;
+        border: 2px solid #000000 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="header-inner">
+      <a href="index.html" style="color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+        <i data-lucide="arrow-left" style="width: 24px; height: 24px;"></i>
+      </a>
+      <div>
+        <div class="header-title">E-Tiket & Status Pendaftaran</div>
+        <div class="header-subtitle">Bandung Bedas Run 2026</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-container">
+
+    <!-- SEARCH TICKETS FORM (Default View) -->
+    <div id="search-view" class="card search-container">
+      <div class="card-header">
+        <div class="card-header-icon" style="background-color: var(--primary-light);">
+          <i data-lucide="search" style="color: var(--primary);"></i>
+        </div>
+        <div>
+          <h2>Cari Pendaftaran Anda</h2>
+          <p>Masukkan info pendaftaran untuk melihat status & unduh e-tiket</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <form onsubmit="handleSearchSubmit(event)">
+          <div class="field" style="margin-bottom: 16px;">
+            <label for="search_query">Email, No. WhatsApp, atau No. Registrasi <span class="req">*</span></label>
+            <input type="text" id="search_query" required placeholder="Contoh: BDR-26-0001 atau email@anda.com">
+          </div>
+          <button type="submit" class="submit-btn" style="width: 100%; justify-content: center;">
+            <i data-lucide="ticket" style="width: 18px; height: 18px;"></i>
+            Cek Status Pendaftaran
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- TICKET DETAIL VIEW (Shown when found & paid) -->
+    <div id="ticket-view" style="display: none;">
+      
+      <!-- E-Ticket Card -->
+      <div class="ticket-wrapper">
+        <div class="ticket-header">
+          <div class="event-banner-tag" style="background-color: var(--primary); color: #FFFFFF; font-size: 9px;">RESMI TERDAFTAR</div>
+          <h2 style="font-size: 20px; font-weight: 800; margin-top: 4px; letter-spacing: -0.01em;">BANDUNG BEDAS RUN 2026</h2>
+          <div style="font-size: 11px; opacity: 0.8; margin-top: 2px;">E-TICKET PESERTA RESMI</div>
+        </div>
+
+        <div class="ticket-body">
+          <!-- QR Code loaded dynamically from API -->
+          <div class="ticket-qr">
+            <img id="ticket-qr-img" src="" alt="QR Code Pendaftaran" style="width: 150px; height: 150px; display: block;">
+          </div>
+
+          <!-- Registration Code -->
+          <div class="ticket-code" id="ticket-reg-code">BDR-26-0000</div>
+
+          <!-- Participant Info Grid -->
+          <div class="ticket-details">
+            <div class="ticket-detail-item">
+              <span class="ticket-detail-label">Nama Lengkap</span>
+              <span class="ticket-detail-val" id="ticket-name">-</span>
+            </div>
+            <div class="ticket-detail-item">
+              <span class="ticket-detail-label">Kategori Lari</span>
+              <span class="ticket-detail-val" id="ticket-category" style="color: var(--primary);">-</span>
+            </div>
+            <div class="ticket-detail-item">
+              <span class="ticket-detail-label">No. KTP (NIK)</span>
+              <span class="ticket-detail-val" id="ticket-nik">-</span>
+            </div>
+            <div class="ticket-detail-item">
+              <span class="ticket-detail-label">Golongan Darah</span>
+              <span class="ticket-detail-val" id="ticket-blood">-</span>
+            </div>
+            <div class="ticket-detail-item" style="grid-column: span 2;">
+              <span class="ticket-detail-label">Komunitas / Instansi</span>
+              <span class="ticket-detail-val" id="ticket-instansi">-</span>
+            </div>
+            <div class="ticket-detail-item">
+              <span class="ticket-detail-label">Kontak Darurat</span>
+              <span class="ticket-detail-val" id="ticket-emergency-contact">-</span>
+            </div>
+            <div class="ticket-detail-item">
+              <span class="ticket-detail-label">Relasi Kontak</span>
+              <span class="ticket-detail-val" id="ticket-emergency-rel">-</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="no-print" style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+        <button type="button" class="submit-btn" style="width: 100%; justify-content: center;" onclick="window.print()">
+          <i data-lucide="printer" style="width: 18px; height: 18px;"></i>
+          Cetak / Simpan PDF
+        </button>
+        <button type="button" class="btn-secondary" style="width: 100%; justify-content: center;" onclick="resetSearchView()">
+          <i data-lucide="search" style="width: 18px; height: 18px;"></i>
+          Cari Tiket Lain
+        </button>
+      </div>
+
+    </div>
+
+    <!-- PENDING / EXPIRED STATUS VIEW -->
+    <div id="status-alert-view" class="card" style="display: none; border-color: var(--warning);">
+      <div class="card-body" style="text-align: center; padding: 30px 20px;">
+        <div id="status-icon" style="font-size: 48px; margin-bottom: 12px;">⏳</div>
+        <h2 id="status-title" style="font-size: 18px; font-weight: 800; color: var(--secondary);">Status Pending</h2>
+        <p id="status-desc" style="font-size: 13px; color: var(--text-muted); margin-top: 8px; line-height: 1.5;"></p>
+        
+        <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 8px;">
+          <a id="status-action-btn" href="#" class="submit-btn" style="justify-content: center; text-decoration: none;">
+            Bayar Sekarang
+          </a>
+          <button type="button" class="btn-secondary" style="justify-content: center;" onclick="resetSearchView()">
+            Kembali Cari
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="back-to-home" style="margin-top: 30px; text-align: center; font-size: 13px;">
+      <a href="index.html" style="color: var(--primary); text-decoration: none; font-weight: 700;">
+        <i data-lucide="home" style="width: 14px; height: 14px; display: inline-block; vertical-align: text-bottom; margin-right: 4px;"></i>
+        Kembali ke Halaman Utama
+      </a>
+    </div>
+
+  </main>
+
+  <!-- Shared JS Modules -->
+  <script src="js/db.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. Check if ID or query is passed in URL
+      const params = new URLSearchParams(window.location.search);
+      const regId = params.get('id');
+      const query = params.get('query');
+
+      if (regId) {
+        loadTicketById(regId);
+      } else if (query) {
+        document.getElementById('search_query').value = query;
+        loadTicketByQuery(query);
+      }
+
+      lucide.createIcons();
+    });
+
+    function handleSearchSubmit(e) {
+      e.preventDefault();
+      const query = document.getElementById('search_query').value;
+      if (query) {
+        loadTicketByQuery(query);
+      }
+    }
+
+    function loadTicketById(id) {
+      const registrations = getRegistrations();
+      const reg = registrations.find(r => r.id === id);
+      if (reg) {
+        showRegistrationResult(reg);
+      } else {
+        alert("Tiket tidak ditemukan.");
+        resetSearchView();
+      }
+    }
+
+    function loadTicketByQuery(query) {
+      const reg = findRegistration(query);
+      if (reg) {
+        showRegistrationResult(reg);
+      } else {
+        alert("Pendaftaran tidak ditemukan. Periksa kembali email, no. WhatsApp, atau kode registrasi Anda.");
+      }
+    }
+
+    function showRegistrationResult(reg) {
+      document.getElementById('search-view').style.display = 'none';
+      document.getElementById('ticket-view').style.display = 'none';
+      document.getElementById('status-alert-view').style.display = 'none';
+
+      if (reg.status === 'paid') {
+        // Show ticket
+        document.getElementById('ticket-view').style.display = 'block';
+        
+        // Load details
+        const category = getCategories().find(c => c.id === reg.category_id);
+        document.getElementById('ticket-name').innerText = reg.buyer_name;
+        document.getElementById('ticket-category').innerText = `${category.distance} — ${category.type}`;
+        document.getElementById('ticket-nik').innerText = reg.nik;
+        document.getElementById('ticket-blood').innerText = reg.golongan_darah;
+        document.getElementById('ticket-instansi').innerText = reg.nama_instansi || '-';
+        document.getElementById('ticket-emergency-contact').innerText = reg.kontak_darurat;
+        document.getElementById('ticket-emergency-rel').innerText = reg.relasi_kontak_darurat;
+        document.getElementById('ticket-reg-code').innerText = reg.registration_code;
+
+        // Generate QR code using public qrserver API
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${reg.registration_code}`;
+        document.getElementById('ticket-qr-img').src = qrUrl;
+
+      } else if (reg.status === 'pending') {
+        // Show pending alert
+        const alertView = document.getElementById('status-alert-view');
+        alertView.style.display = 'block';
+        alertView.style.borderColor = 'var(--warning)';
+        
+        document.getElementById('status-icon').innerText = '⏳';
+        document.getElementById('status-title').innerText = 'Status: Pending (Belum Bayar)';
+        document.getElementById('status-desc').innerText = `Pendaftaran Anda dengan kode ${reg.registration_code} berhasil dicatat, tetapi pembayaran belum lunas. Selesaikan pembayaran sebelum batas waktu expired.`;
+        
+        const actionBtn = document.getElementById('status-action-btn');
+        actionBtn.style.display = 'inline-flex';
+        actionBtn.href = `bayar.html?id=${reg.id}`;
+        actionBtn.innerText = 'Bayar Sekarang';
+      } else if (reg.status === 'expired') {
+        // Show expired alert
+        const alertView = document.getElementById('status-alert-view');
+        alertView.style.display = 'block';
+        alertView.style.borderColor = 'var(--danger)';
+        
+        document.getElementById('status-icon').innerText = '🚫';
+        document.getElementById('status-title').innerText = 'Status: Kadaluarsa (Expired)';
+        document.getElementById('status-desc').innerText = `Transaksi pendaftaran Anda (${reg.registration_code}) telah kadaluarsa karena melewati batas waktu pembayaran. Silakan daftar kembali untuk memesan slot baru.`;
+        
+        const actionBtn = document.getElementById('status-action-btn');
+        actionBtn.href = 'index.html';
+        actionBtn.innerText = 'Daftar Ulang';
+      }
+    }
+
+    function resetSearchView() {
+      // Clear URL params without reloading
+      const url = new URL(window.location);
+      url.searchParams.delete('id');
+      url.searchParams.delete('query');
+      window.history.pushState({}, '', url);
+
+      document.getElementById('ticket-view').style.display = 'none';
+      document.getElementById('status-alert-view').style.display = 'none';
+      document.getElementById('search-view').style.display = 'block';
+      document.getElementById('search_query').value = '';
+    }
+  </script>
+</body>
+</html>
