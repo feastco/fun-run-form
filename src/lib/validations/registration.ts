@@ -33,7 +33,7 @@ export const registrationSchema = z.object({
   address: z.string().min(10, 'Alamat lengkap minimal 10 karakter.'),
   blood_type: z.enum(['A', 'B', 'AB', 'O']).optional().or(z.literal('')),
   medical_history: z.string().max(1000, 'Riwayat penyakit maksimal 1000 karakter.').optional(),
-  jersey_size: z.enum(['S', 'M', 'L', 'XL', 'XXL'], {
+  jersey_size: z.enum(['S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL', '5XL'], {
     errorMap: () => ({ message: 'Pilih ukuran jersey.' }),
   }),
   emergency_contact_name: z.string().min(1, 'Nama kontak darurat harus diisi.').max(255, 'Nama terlalu panjang.'),

@@ -1,7 +1,6 @@
 import { getActiveEvents } from '@/services/event.service'
 import { HeroSection } from '@/components/landing/hero-section'
-import { CategoryCard } from '@/components/landing/category-card'
-import { StatusQuickSearch } from '@/components/landing/status-quick-search'
+import { DistanceCategoryGroup } from '@/components/landing/distance-category-group'
 import Link from 'next/link'
 
 export const revalidate = 0 // Disable cache for real-time quota count
@@ -80,6 +79,37 @@ export default async function LandingPage() {
 
   const activeEvent = events[0]
 
+  // Group categories by distance_km
+  const categoryGroups: Record<number, {
+    id: string; name: string; distanceKm: number; price: number;
+    quota: number; availableSlots: number; isRegistrationOpen: boolean
+  }[]> = {}
+
+  if (activeEvent?.event_categories) {
+    const now = new Date()
+    const openAt = new Date(activeEvent.registration_open_at)
+    const closeAt = new Date(activeEvent.registration_close_at)
+    const isRegistrationOpen = now >= openAt && now <= closeAt && activeEvent.is_active
+
+    for (const cat of activeEvent.event_categories) {
+      const km = Number(cat.distance_km)
+      if (!categoryGroups[km]) categoryGroups[km] = []
+      categoryGroups[km].push({
+        id: cat.id,
+        name: cat.name,
+        distanceKm: km,
+        price: cat.price,
+        quota: cat.quota,
+        availableSlots: Math.max(0, cat.quota - cat.reserved_count),
+        isRegistrationOpen,
+      })
+    }
+  }
+
+  const sortedDistances = Object.keys(categoryGroups)
+    .map(Number)
+    .sort((a, b) => a - b)
+
   return (
     <div className="flex flex-col min-h-screen bg-surface">
       {Navbar}
@@ -93,41 +123,61 @@ export default async function LandingPage() {
               location={activeEvent.location}
             />
 
-            {/* Quick Status Search */}
-            <div className="mb-10">
-              <StatusQuickSearch />
+            {/* Status CTA Banner */}
+            <div className="mb-10 bg-secondary/5 border border-secondary/10 rounded-2xl px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-11 h-11 rounded-xl bg-secondary flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="font-bold text-text-primary text-[15px]">Sudah Mendaftar?</p>
+                  <p className="text-xs text-text-secondary">Cek status pendaftaran, download e-ticket, atau lanjutkan pembayaran Anda.</p>
+                </div>
+              </div>
+              <Link
+                href="/status"
+                className="flex-shrink-0 inline-flex items-center gap-2 px-6 h-11 bg-secondary text-white font-bold rounded-xl hover:bg-secondary/90 transition-all text-sm active:scale-95"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                Cek Status Pendaftaran
+              </Link>
             </div>
 
-            <div className="mb-8">
-              <h2 className="text-3xl font-extrabold text-text-primary tracking-tight mb-2">
-                Pilih Kategori Lari
-              </h2>
-              <p className="text-text-secondary">
-                Pilih kategori jarak lari yang sesuai dengan minat dan kemampuan fisik Anda.
-              </p>
+            {/* Category Groups */}
+            <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+              <div>
+                <h2 className="text-3xl font-extrabold text-text-primary tracking-tight mb-1">
+                  Pilih Kategori Lari
+                </h2>
+                <p className="text-text-secondary text-sm">
+                  Pilih jarak dan kategori yang sesuai kemampuan Anda. Atau{' '}
+                  <Link href="/daftar" className="text-primary font-semibold hover:underline">
+                    daftar langsung
+                  </Link>{' '}
+                  dan pilih kategori di formulir.
+                </p>
+              </div>
+              <Link
+                href="/daftar"
+                className="flex-shrink-0 inline-flex items-center gap-2 px-5 h-10 border-2 border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-all text-sm"
+              >
+                Lihat Semua Kategori →
+              </Link>
             </div>
 
-            {activeEvent.event_categories && activeEvent.event_categories.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {activeEvent.event_categories.map((category: SimpleCategory) => {
-                  const now = new Date()
-                  const openAt = new Date(activeEvent.registration_open_at)
-                  const closeAt = new Date(activeEvent.registration_close_at)
-                  const isRegistrationOpen = now >= openAt && now <= closeAt && activeEvent.is_active
-
-                  return (
-                    <CategoryCard
-                      key={category.id}
-                      id={category.id}
-                      name={category.name}
-                      distanceKm={Number(category.distance_km)}
-                      price={category.price}
-                      quota={category.quota}
-                      availableSlots={Math.max(0, category.quota - category.reserved_count)}
-                      isRegistrationOpen={isRegistrationOpen}
-                    />
-                  )
-                })}
+            {sortedDistances.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {sortedDistances.map(km => (
+                  <DistanceCategoryGroup
+                    key={km}
+                    distanceKm={km}
+                    categories={categoryGroups[km]}
+                  />
+                ))}
               </div>
             ) : (
               <div className="text-center bg-white rounded-card p-12 shadow-default border border-[#F3F4F6]">
