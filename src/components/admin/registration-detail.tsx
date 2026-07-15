@@ -163,6 +163,26 @@ export function RegistrationDetail({ registrationId, onClose }: RegistrationDeta
                     <span className="text-xs text-text-secondary">Ukuran Jersey</span>
                     <p className="font-semibold text-text-primary mt-0.5">{detail.jersey_size}</p>
                   </div>
+                  {detail.nationality === 'WNI' && (
+                    <>
+                      <div>
+                        <span className="text-xs text-text-secondary">Provinsi</span>
+                        <p className="font-semibold text-text-primary mt-0.5">{detail.province || '-'}</p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-text-secondary">Kota / Kabupaten</span>
+                        <p className="font-semibold text-text-primary mt-0.5">{detail.city || '-'}</p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-text-secondary">Kecamatan</span>
+                        <p className="font-semibold text-text-primary mt-0.5">{detail.district || '-'}</p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-text-secondary">Desa / Kelurahan</span>
+                        <p className="font-semibold text-text-primary mt-0.5">{detail.village || '-'}</p>
+                      </div>
+                    </>
+                  )}
                   <div className="md:col-span-2">
                     <span className="text-xs text-text-secondary">Alamat Lengkap</span>
                     <p className="font-semibold text-text-primary mt-0.5">{detail.address}</p>
