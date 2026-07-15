@@ -566,8 +566,18 @@ export function RegistrationForm({ categories, defaultCategoryId }: Registration
       </div>
 
       <div className="pt-4">
-        <Button type="submit" variant="primary" className="w-full h-[48px]" isLoading={isLoading}>
-          Daftar Sekarang &amp; Lanjut ke Pembayaran
+        <Button
+          type="submit"
+          variant="primary"
+          className="w-full h-auto min-h-[48px] py-3 px-4 flex items-center justify-center gap-2 text-sm sm:text-base cursor-pointer"
+          isLoading={isLoading}
+        >
+          <span className="text-center leading-tight">Daftar Sekarang &amp; Lanjut ke Pembayaran</span>
+          {!isLoading && (
+            <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+            </svg>
+          )}
         </Button>
       </div>
     </form>
