@@ -2,7 +2,8 @@
   "crons": [
     {
       "path": "/api/v1/cron/expired-payments",
-      "schedule": "*/30 * * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }
+
