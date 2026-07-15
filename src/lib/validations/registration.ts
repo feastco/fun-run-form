@@ -26,10 +26,10 @@ export const registrationSchema = z.object({
   nationality: z.enum(['WNI', 'WNA'], {
     errorMap: () => ({ message: 'Pilih kewarganegaraan.' }),
   }),
-  province: z.string().min(1, 'Pilih provinsi.'),
-  city: z.string().min(1, 'Pilih kota/kabupaten.'),
-  district: z.string().min(1, 'Pilih kecamatan.'),
-  village: z.string().min(1, 'Pilih desa/kelurahan.'),
+  province: z.string().optional().or(z.literal('')),
+  city: z.string().optional().or(z.literal('')),
+  district: z.string().optional().or(z.literal('')),
+  village: z.string().optional().or(z.literal('')),
   address: z.string().min(10, 'Alamat lengkap minimal 10 karakter.'),
   blood_type: z.enum(['A', 'B', 'AB', 'O']).optional().or(z.literal('')),
   medical_history: z.string().max(1000, 'Riwayat penyakit maksimal 1000 karakter.').optional(),
@@ -49,6 +49,37 @@ export const registrationSchema = z.object({
   agree_terms: z.literal(true, {
     errorMap: () => ({ message: 'Anda harus menyetujui seluruh peraturan dan ketentuan.' }),
   }),
+}).superRefine((data, ctx) => {
+  if (data.nationality === 'WNI') {
+    if (!data.province || data.province.trim() === '') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Pilih provinsi.',
+        path: ['province'],
+      })
+    }
+    if (!data.city || data.city.trim() === '') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Pilih kota/kabupaten.',
+        path: ['city'],
+      })
+    }
+    if (!data.district || data.district.trim() === '') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Pilih kecamatan.',
+        path: ['district'],
+      })
+    }
+    if (!data.village || data.village.trim() === '') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Pilih desa/kelurahan.',
+        path: ['village'],
+      })
+    }
+  }
 })
 
 export type RegistrationFormInput = z.infer<typeof registrationSchema>

@@ -60,6 +60,7 @@ export function RegistrationForm({ categories, defaultCategoryId }: Registration
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<RegistrationFormInput>({
     resolver: zodResolver(registrationSchema),
@@ -70,6 +71,9 @@ export function RegistrationForm({ categories, defaultCategoryId }: Registration
       medical_history: '',
     },
   })
+
+  const watchedNationality = watch('nationality')
+
 
   // Load provinces on mount
   useEffect(() => {
@@ -279,64 +283,68 @@ export function RegistrationForm({ categories, defaultCategoryId }: Registration
           }
         />
 
-        <Combobox
-          id="province"
-          label="Provinsi"
-          required
-          options={provinceOptions}
-          value={selectedProvinceId}
-          placeholder="Ketik nama provinsi..."
-          error={errors.province?.message}
-          onChange={(id, name) => {
-            setSelectedProvinceId(id)
-            setValue('province', name)
-          }}
-        />
+        {watchedNationality === 'WNI' && (
+          <>
+            <Combobox
+              id="province"
+              label="Provinsi"
+              required
+              options={provinceOptions}
+              value={selectedProvinceId}
+              placeholder="Ketik nama provinsi..."
+              error={errors.province?.message}
+              onChange={(id, name) => {
+                setSelectedProvinceId(id)
+                setValue('province', name)
+              }}
+            />
 
-        <Combobox
-          id="city"
-          label="Kota / Kabupaten"
-          required
-          options={cityOptions}
-          value={selectedCityId}
-          placeholder={loadingCity ? 'Memuat...' : 'Ketik nama kota/kabupaten...'}
-          disabled={!selectedProvinceId || loadingCity}
-          error={errors.city?.message}
-          onChange={(id, name) => {
-            setSelectedCityId(id)
-            setValue('city', name)
-          }}
-        />
+            <Combobox
+              id="city"
+              label="Kota / Kabupaten"
+              required
+              options={cityOptions}
+              value={selectedCityId}
+              placeholder={loadingCity ? 'Memuat...' : 'Ketik nama kota/kabupaten...'}
+              disabled={!selectedProvinceId || loadingCity}
+              error={errors.city?.message}
+              onChange={(id, name) => {
+                setSelectedCityId(id)
+                setValue('city', name)
+              }}
+            />
 
-        <Combobox
-          id="district"
-          label="Kecamatan"
-          required
-          options={districtOptions}
-          value={selectedDistrictId}
-          placeholder={loadingDistrict ? 'Memuat...' : 'Ketik nama kecamatan...'}
-          disabled={!selectedCityId || loadingDistrict}
-          error={errors.district?.message}
-          onChange={(id, name) => {
-            setSelectedDistrictId(id)
-            setValue('district', name)
-          }}
-        />
+            <Combobox
+              id="district"
+              label="Kecamatan"
+              required
+              options={districtOptions}
+              value={selectedDistrictId}
+              placeholder={loadingDistrict ? 'Memuat...' : 'Ketik nama kecamatan...'}
+              disabled={!selectedCityId || loadingDistrict}
+              error={errors.district?.message}
+              onChange={(id, name) => {
+                setSelectedDistrictId(id)
+                setValue('district', name)
+              }}
+            />
 
-        <Combobox
-          id="village"
-          label="Desa / Kelurahan"
-          required
-          options={villageOptions}
-          value={selectedVillageId}
-          placeholder={loadingVillage ? 'Memuat...' : 'Ketik nama desa/kelurahan...'}
-          disabled={!selectedDistrictId || loadingVillage}
-          error={errors.village?.message}
-          onChange={(id, name) => {
-            setSelectedVillageId(id)
-            setValue('village', name)
-          }}
-        />
+            <Combobox
+              id="village"
+              label="Desa / Kelurahan"
+              required
+              options={villageOptions}
+              value={selectedVillageId}
+              placeholder={loadingVillage ? 'Memuat...' : 'Ketik nama desa/kelurahan...'}
+              disabled={!selectedDistrictId || loadingVillage}
+              error={errors.village?.message}
+              onChange={(id, name) => {
+                setSelectedVillageId(id)
+                setValue('village', name)
+              }}
+            />
+          </>
+        )}
 
         <Input id="address" label="Alamat Lengkap" required placeholder="Nama jalan, RT/RW, nomor rumah" error={errors.address?.message} {...register('address')} />
       </div>

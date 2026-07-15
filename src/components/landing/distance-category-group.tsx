@@ -36,12 +36,8 @@ export function DistanceCategoryGroup({ distanceKm, categories }: DistanceCatego
   const distanceIcons: Record<number, React.ReactNode> = {
     5: (
       <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-        <path d="M18.8 6c0-.5-.4-.9-.9-.9h-1.6c-.6 0-1.1.4-1.2 1l-.8 4.2c-.1.5.3 1 .8 1h1.5c.5 0 .9-.4 1-.9l1.2-5.4Z" />
-        <path d="M4 14.5a2.5 2.5 0 1 1 5 0 2.5 2.5 0 0 1-5 0Z" />
-        <path d="M11.5 16h6" />
-        <path d="m14 11 1.5 5" />
-        <path d="m9.5 11-1.5 5" />
-        <path d="M9.7 7.7a2.5 2.5 0 0 1 3.5.5l1.6 2c.4.5 1 .8 1.7.8h1" />
+        <circle cx="18" cy="5" r="2" />
+        <path d="M4 9h5l1.5 2M11.5 11l2-4.5 3 2.5M13.5 15l-1 5M16.5 13l2.5 5" />
       </svg>
     ),
     10: (
