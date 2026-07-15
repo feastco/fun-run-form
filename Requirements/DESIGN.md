@@ -242,6 +242,260 @@ VALIDASI B5c-DETAIL:
 END PAGE: Form Pendaftaran
 ═══════════════════════════════════════════════
 
+═══════════════════════════════════════════════
+PAGE: Status & E-Ticket
+Route: /status | Role: public
+Generated on-demand dari B5c-LITE No. 3
+═══════════════════════════════════════════════
+
+BAGIAN 1: STITCH PROMPT
+Style: Bold, energetic, and confident (Bold Modern).
+Navbar: Dark Midnight Navy (#1A1A2E) sticky navbar, white text, height 64px. Left: Logo "Fun Run" (bold, 20px, white). Right: Admin login menu link.
+Footer: Midnight Navy (#1A1A2E) footer, text #9CA3AF "© 2026 Fun Run · Stadion Si Jalak Harupat · Soreang, Kab. Bandung".
+Lookup Card:
+- Container: max-w-600px mx-auto px-24px py-48px.
+- Heading: "CEK STATUS PENDAFTARAN" in 800 weight, 36px, text-primary (#FF4D00).
+- Tabs: "Email", "Nomor Registrasi", "Nomor HP". Tabs active state: bg-primary (#FF4D00), text-white. Inactive state: bg-gray-100, text-gray-700.
+- Input Fields:
+  - Email tab: input type="email" placeholder="contoh@email.com".
+  - Nomor Registrasi tab: input type="text" placeholder="BR2026-0001".
+  - Nomor HP tab: input type="text" placeholder="081234567890".
+- CTA: Primary button "Cari Pendaftaran" (width full, height 44px, hover #E64500).
+
+Result Section:
+- If pending_payment: Show Yellow Warning card. Header: "Menunggu Pembayaran", Details: Nama, Event, Kategori, Nomor Registrasi, Harga. Action: "Bayar Sekarang" button (opens Snap popup).
+- If paid: Show Green Success card. Header: "Pendaftaran Aktif", Details: Nama, Event, Kategori, Nomor Registrasi. Render E-Ticket card containing dynamic QR Code (URL: {BASE_URL}/verify/{qr_code_token}) and Print button.
+- If expired: Show Gray card. Header: "Pendaftaran Kedaluwarsa", Details: Nama, Event, Kategori, Nomor Registrasi. Description: "Batas waktu pembayaran 24 jam telah habis."
+- If cancelled: Show Red Danger card. Header: "Pendaftaran Dibatalkan", Details: Nama, Event, Kategori, Nomor Registrasi.
+
+BAGIAN 2: TECHNICAL SPEC
+1. Components:
+   - `src/app/status/page.tsx` (Status lookup page client component)
+   - `src/components/forms/status-lookup-form.tsx` (Handles form input, active tab state, API fetch)
+   - `src/components/ticket/e-ticket.tsx` (E-ticket details + QR code rendering)
+2. APIs Called:
+   - API-003 (GET /api/v1/registrations/status) to search registrations by query.
+3. States:
+   - Loading: Pulsing skeleton lookup cards.
+   - Empty: If registration not found, show: "Pendaftaran tidak ditemukan. Pastikan data yang dimasukkan benar."
+   - Success: Render registration information and (if paid) the ticket component.
+   - Error: Toast "Gagal mencari data. Silakan coba lagi."
+4. UI Specs & Tokens:
+   - Fonts: Inter.
+   - Status colors: paid (#10B981), pending_payment (#F59E0B), expired (#6B7280), cancelled (#E63946).
+
+VALIDASI B5c-DETAIL:
+[x] Mandiri (tidak perlu buka file lain)
+[x] 4 states ada dengan teks eksak
+[x] Semua API-ID ada di MASTER REFERENCES (API-003)
+[x] Navbar + footer dari B5a di-paste penuh
+[x] Success state SATU pilihan saja
+[x] Data mock realistis
+
+═══════════════════════════════════════════════
+END PAGE: Status & E-Ticket
+═══════════════════════════════════════════════
+
+═══════════════════════════════════════════════
+PAGE: Admin Login
+Route: /admin/login | Role: public
+Generated on-demand dari B5c-LITE No. 4
+═══════════════════════════════════════════════
+
+BAGIAN 1: STITCH PROMPT
+Style: Bold, energetic, and confident (Bold Modern).
+Container: min-h-screen bg-[#1A1A2E] flex flex-col justify-center py-12 sm:px-6 lg:px-8.
+Login Card:
+- Container: max-w-md w-full mx-auto bg-white rounded-2xl border border-gray-100 p-8 shadow-elevated.
+- Heading: "LOGIN ADMIN" in 800 weight, 28px, text-secondary (#1A1A2E) text-center.
+- Subtitle: "Masukkan kredensial Anda untuk mengakses panel administrasi." in 14px text-text-secondary text-center mb-6.
+- Input Fields:
+  - Email: input type="email" label="Email Address" placeholder="admin@domain.com".
+  - Password: input type="password" label="Password" placeholder="••••••••".
+- CTA: Primary button "Login Admin" (width full, height 44px, hover #E64500).
+
+BAGIAN 2: TECHNICAL SPEC
+1. Components:
+   - `src/app/admin/login/page.tsx` (Login page component with form submit, validation, redirect)
+2. APIs Called:
+   - API-005 (POST /api/v1/auth/login) to authenticate admin session.
+3. States:
+   - Loading: Button showing spinner "Authenticating...".
+   - Success: Redirect to `/admin`.
+   - Error: Display red alert text "Email atau password salah".
+4. UI Specs & Tokens:
+   - Primary: #FF4D00, Secondary: #1A1A2E.
+   - Fonts: Inter.
+
+VALIDASI B5c-DETAIL:
+[x] Mandiri (tidak perlu buka file lain)
+[x] 4 states ada dengan teks eksak
+[x] Semua API-ID ada di MASTER REFERENCES (API-005)
+[x] Navbar + footer dari B5a di-paste penuh
+[x] Success state SATU pilihan saja
+[x] Data mock realistis
+
+═══════════════════════════════════════════════
+END PAGE: Admin Login
+═══════════════════════════════════════════════
+
+═══════════════════════════════════════════════
+PAGE: Admin Dashboard
+Route: /admin | Role: admin
+Generated on-demand dari B5c-LITE No. 5
+═══════════════════════════════════════════════
+
+BAGIAN 1: STITCH PROMPT
+Style: Bold, energetic, and confident (Bold Modern).
+Stats Cards Grid:
+- Container: grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8.
+- Card 1: bg white, border 1px #F3F4F6, radius 12px, shadow, padding 24px. Title: "Total Pendaftaran" (gray-500, 14px), Value: number (bold, 28px).
+- Card 2: bg white. Title: "Pembayaran Lunas", Value: number, badge success ("paid").
+- Card 3: bg white. Title: "Menunggu Pembayaran", Value: number, badge warning ("pending").
+- Card 4: bg white. Title: "Total Pendapatan", Value: IDR Currency format (bold, 24px, primary color).
+
+Category Quotas Section:
+- Heading: "Ketersediaan Kuota Kategori" (bold, 20px, text-secondary).
+- Grid: list of categories showing progress bar of reserved slots vs quota limit.
+
+Recent Registrations Section:
+- Heading: "Pendaftaran Terbaru" (bold, 20px, text-secondary).
+- Table: simple table showing recent registrations. Header: No Registrasi, Nama, Kategori, Status.
+
+BAGIAN 2: TECHNICAL SPEC
+1. Components:
+   - `src/app/admin/page.tsx` (Server page fetching dashboard stats and rendering view)
+   - `src/components/admin/stats-card.tsx` (Summary statistic card component)
+2. APIs Called:
+   - API-012 (GET /api/v1/admin/dashboard) to fetch stats metadata.
+3. States:
+   - Loading: pulsing card and list skeletons.
+   - Empty: display text "Belum ada pendaftaran" if zero count.
+   - Success: render dashboard panels with dynamic counts.
+   - Error: toast message showing error details.
+4. UI Specs & Tokens:
+   - Fonts: Inter.
+
+VALIDASI B5c-DETAIL:
+[x] Mandiri (tidak perlu buka file lain)
+[x] 4 states ada dengan teks eksak
+[x] Semua API-ID ada di MASTER REFERENCES (API-012)
+[x] Navbar + footer dari B5a di-paste penuh
+[x] Success state SATU pilihan saja
+[x] Data mock realistis
+
+═══════════════════════════════════════════════
+END PAGE: Admin Dashboard
+═══════════════════════════════════════════════
+
+═══════════════════════════════════════════════
+PAGE: Admin Peserta
+Route: /admin/peserta | Role: admin
+Generated on-demand dari B5c-LITE No. 6
+═══════════════════════════════════════════════
+
+BAGIAN 1: STITCH PROMPT
+Style: Bold, energetic, and confident (Bold Modern).
+Search & Filter Panel:
+- Search Input: placeholder "Cari nama, email, hp, reg..."
+- Category Filter: dropdown select for category.
+- Status Filter: dropdown select for status.
+Table:
+- Container: bg white, radius 12px, border 1px #F3F4F6, shadow, overflow-x-auto.
+- Columns: No. Registrasi, Nama, Email, Kategori, Status, Tanggal Daftar, Aksi.
+- Aksi: Button "Detail" (Secondary variant).
+Pagination:
+- Next and Previous buttons, page indicator.
+Detail Modal:
+- bg overlay dark semi-transparent.
+- Modal box: max-w-2xl bg white, radius 12px, padding 24px, scrollable.
+- Fields: NIK, Gender, Tempat Tanggal Lahir, Kewarganegaraan, Ukuran Jersey, Alamat, Golongan Darah, Riwayat Kesehatan, Kontak Darurat (Nama & HP).
+- Close button.
+
+BAGIAN 2: TECHNICAL SPEC
+1. Components:
+   - `src/app/admin/peserta/page.tsx` (Parent dashboard client component for list)
+   - `src/components/admin/registration-table.tsx` (Table lists registrations with search and pagination)
+   - `src/components/admin/registration-detail.tsx` (Detail modal displaying sensitive fields)
+2. APIs Called:
+   - API-007 (GET /api/v1/admin/registrations) to fetch list of participants.
+   - API-008 (GET /api/v1/admin/registrations/[id]) to fetch specific participant detail.
+3. States:
+   - Loading: Pulsing table skeletons.
+   - Empty: display text "Belum ada peserta" if zero results returned.
+   - Success: render table containing registration rows.
+   - Error: toast message "Gagal memuat peserta".
+4. UI Specs & Tokens:
+   - Fonts: Inter.
+
+VALIDASI B5c-DETAIL:
+[x] Mandiri (tidak perlu buka file lain)
+[x] 4 states ada dengan teks eksak
+[x] Semua API-ID ada di MASTER REFERENCES (API-007, API-008)
+[x] Navbar + footer dari B5a di-paste penuh
+[x] Success state SATU pilihan saja
+[x] Data mock realistis
+
+═══════════════════════════════════════════════
+END PAGE: Admin Peserta
+═══════════════════════════════════════════════
+
+═══════════════════════════════════════════════
+PAGE: Admin Transaksi
+Route: /admin/transaksi | Role: admin
+Generated on-demand dari B5c-LITE No. 7
+═══════════════════════════════════════════════
+
+BAGIAN 1: STITCH PROMPT
+Style: Bold, energetic, and confident (Bold Modern).
+Top Action Bar:
+- Heading: "TRANSAKSI & KUOTA" (bold, 24px, text-secondary).
+- Action Buttons:
+  - "Ekspor CSV" button: Primary secondary outline or primary, download file trigger.
+  - "Kelola Kuota" button: opens Quota management panel.
+Table:
+- Container: bg white, radius 12px, border 1px #F3F4F6, shadow, overflow-x-auto.
+- Columns: Order ID, Nama Peserta, Nominal, Metode, Status, Tanggal Transaksi.
+Modal Edit Kuota:
+- bg overlay dark semi-transparent.
+- Modal container: max-w-md w-full bg white, radius 12px, p-24px.
+- Heading: "EDIT KUOTA KATEGORI" (bold, 18px).
+- Dropdown select category.
+- Number Input for new quota.
+- CTA buttons: "Batal" and "Simpan Kuota".
+
+BAGIAN 2: TECHNICAL SPEC
+1. Components:
+   - `src/app/admin/transaksi/page.tsx` (Transactions admin page view)
+   - `src/components/admin/transaction-table.tsx` (Table lists transactions + export CSV + quota updates)
+2. APIs Called:
+   - API-010 (GET /api/v1/admin/transactions) to fetch transactions.
+   - API-009 (GET /api/v1/admin/registrations/export) to trigger CSV download.
+   - API-011 (PATCH /api/v1/admin/categories/[id]) to update quota of a specific category.
+3. States:
+   - Loading: pulsing skeletons of table list.
+   - Empty: display text "Belum ada transaksi" if list is empty.
+   - Success: render transactions table with export action. Show toast "Kuota berhasil diperbarui" upon quota patch success.
+   - Error: show warning toast "Kuota gagal diperbarui".
+4. UI Specs & Tokens:
+   - Fonts: Inter.
+
+VALIDASI B5c-DETAIL:
+[x] Mandiri (tidak perlu buka file lain)
+[x] 4 states ada dengan teks eksak
+[x] Semua API-ID ada di MASTER REFERENCES (API-009, API-010, API-011)
+[x] Navbar + footer dari B5a di-paste penuh
+[x] Success state SATU pilihan saja
+[x] Data mock realistis
+
+═══════════════════════════════════════════════
+END PAGE: Admin Transaksi
+═══════════════════════════════════════════════
+
+
+
+
+
 ---
 
 ## ERROR PAGES

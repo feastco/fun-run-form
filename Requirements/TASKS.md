@@ -9,10 +9,10 @@
 
 | Field | Value |
 |-------|-------|
-| Task selesai | TASK-007 |
-| Task berikutnya | TASK-008 |
-| Berhenti di | TASK-007 selesai |
-| File diubah | src/lib/midtrans/client.ts, src/types/midtrans-client.d.ts, src/services/registration.service.ts, src/app/api/v1/registrations/route.ts, src/lib/env.ts, src/app/api/v1/events/route.ts, Requirements/changelog.md, Requirements/TASKS.md, src/app/daftar/page.tsx |
+| Task selesai | TASK-015 |
+| Task berikutnya | Sprint 2 completed |
+| Berhenti di | Sprint 2 selesai |
+| File diubah | src/app/api/v1/admin/transactions/route.ts, src/app/api/v1/admin/registrations/export/route.ts, src/app/api/v1/admin/categories/[id]/route.ts, src/components/admin/transaction-table.tsx, src/app/admin/transaksi/page.tsx, src/app/api/v1/cron/expired-payments/route.ts, src/app/not-found.tsx, src/app/error.tsx, src/app/maintenance/page.tsx, Requirements/DESIGN.md, Requirements/TASKS.md, Requirements/changelog.md |
 | Blocker | none |
 
 ---
@@ -92,7 +92,7 @@
 **Goal:** User cek status + e-ticket, admin kelola peserta, production-ready  
 **Durasi:** 5 hari | **SP:** 23 | **Buffer:** 2
 
-- [ ] **TASK-008** (3 SP 🔴) Webhook handler
+- [x] **TASK-008** (3 SP 🔴) Webhook handler
   - API-004: `src/app/api/v1/payments/notification/route.ts` — POST
   - Signature verify: SHA512(order_id + status_code + gross_amount + server_key)
   - Idempotent: check current status before update
@@ -103,7 +103,7 @@
   - Use service_role client (bypass RLS)
   - Depends: TASK-006
 
-- [ ] **TASK-009** (3 SP 🟡) Status page + API
+- [x] **TASK-009** (3 SP 🟡) Status page + API
   - API-003: `src/app/api/v1/registrations/status/route.ts` — GET
   - `src/components/forms/status-lookup-form.tsx` — tabs: email / reg_number / phone
   - `src/app/status/page.tsx` — lookup form + result card
@@ -113,7 +113,7 @@
   - Support query param `?reg=BR2026-0001` (auto-fill dari redirect)
   - Depends: TASK-008
 
-- [ ] **TASK-010** (2 SP 🟢) E-ticket + QR
+- [x] **TASK-010** (2 SP 🟢) E-ticket + QR
   - `src/components/ticket/e-ticket.tsx`
   - QR code via qrcode.react (value: `{BASE_URL}/verify/{qr_code_token}`)
   - Ticket layout: nama, event, kategori, reg number, QR
@@ -121,7 +121,7 @@
   - Only render if registration_status = paid
   - Depends: TASK-009
 
-- [ ] **TASK-011** (3 SP 🔴) Admin auth + layout
+- [x] **TASK-011** (3 SP 🔴) Admin auth + layout
   - API-005: login route — Supabase signInWithPassword + verify profile role=admin
   - API-006: logout route — Supabase signOut
   - `src/app/admin/login/page.tsx` — login form
@@ -132,7 +132,7 @@
   - Rate limit check (5x/15min — log attempts)
   - Depends: TASK-003
 
-- [ ] **TASK-012** (5 SP 🟡) Admin dashboard + peserta
+- [x] **TASK-012** (5 SP 🟡) Admin dashboard + peserta
   - API-012: dashboard stats
   - API-007: list registrations (paginated, search, filter)
   - API-008: registration detail
@@ -145,7 +145,7 @@
   - Skeleton loading, empty state, pagination
   - Depends: TASK-011
 
-- [ ] **TASK-013** (3 SP 🟡) Admin transaksi + CSV + kuota
+- [x] **TASK-013** (3 SP 🟡) Admin transaksi + CSV + kuota
   - API-010: list transactions
   - API-009: export CSV (Content-Type text/csv, download)
   - API-011: PATCH quota (validate >= reserved_count)
@@ -154,7 +154,7 @@
   - Export button → download CSV
   - Depends: TASK-011
 
-- [ ] **TASK-014** (2 SP 🔴) Expired cron + error pages
+- [x] **TASK-014** (2 SP 🔴) Expired cron + error pages
   - Vercel Cron: `vercel.json` → `"crons": [{"path":"/api/v1/cron/expire","schedule":"*/30 * * * *"}]`
   - `src/app/api/v1/cron/expire/route.ts` — find pending >24h, expire + release slot
   - `src/app/not-found.tsx` — 404 page (standalone, design tokens)
@@ -162,7 +162,7 @@
   - `src/app/maintenance/page.tsx` — maintenance page
   - Depends: TASK-008
 
-- [ ] **TASK-015** (2 SP 🔴) Testing + launch
+- [x] **TASK-015** (2 SP 🔴) Testing + launch
   - Smoke test 5 flows (lihat B8b)
   - `npm audit` — fix HIGH/CRITICAL
   - ESLint pass semua file
