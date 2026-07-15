@@ -479,8 +479,10 @@ export function RegistrationForm({ categories, defaultCategoryId }: Registration
               </svg>
             ),
             peserta: (
-              <svg className="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              <svg className="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                <circle cx="15" cy="4" r="2" />
+                <path d="M7 13h5l2-3.5M12 9l2-4h3" />
+                <path d="M9 20l2.5-5.5.5-4M13 10.5l2.5 4.5 1 5" />
               </svg>
             ),
             racepack: (

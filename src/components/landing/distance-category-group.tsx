@@ -58,8 +58,10 @@ export function DistanceCategoryGroup({ distanceKm, categories }: DistanceCatego
 
   const gradientClass = distanceColors[distanceKm] ?? 'from-primary to-secondary'
   const icon = distanceIcons[distanceKm] ?? (
-    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+      <circle cx="15" cy="4" r="2" />
+      <path d="M7 13h5l2-3.5M12 9l2-4h3" />
+      <path d="M9 20l2.5-5.5.5-4M13 10.5l2.5 4.5 1 5" />
     </svg>
   )
 
