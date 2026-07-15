@@ -62,7 +62,8 @@ export function DistanceCategoryGroup({ distanceKm, categories }: DistanceCatego
           <span className="text-5xl font-black opacity-20">{distanceKm}K</span>
         </div>
         <h3 className="text-2xl font-black tracking-tight">{distanceKm}K Fun Run</h3>
-        <p className="text-white/70 text-xs mt-0.5">
+        <p className="text-lg font-bold mt-1 text-white">{formatCurrency(categories[0]?.price ?? 0)}</p>
+        <p className="text-white/80 text-xs mt-1">
           Kuota tersisa: <span className="font-bold text-white">{totalAvailable}</span> / {totalQuota} slot
         </p>
       </div>
@@ -84,22 +85,8 @@ export function DistanceCategoryGroup({ distanceKm, categories }: DistanceCatego
             </option>
           ))}
         </select>
-
-        {selected && (
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <div className="bg-surface rounded-lg p-3 text-center">
-              <p className="text-xs text-text-secondary mb-0.5">Biaya</p>
-              <p className="text-base font-extrabold text-primary">{formatCurrency(selected.price)}</p>
-            </div>
-            <div className="bg-surface rounded-lg p-3 text-center">
-              <p className="text-xs text-text-secondary mb-0.5">Sisa Slot</p>
-              <p className={`text-base font-extrabold ${isSoldOut ? 'text-danger' : 'text-success'}`}>
-                {isSoldOut ? 'Habis' : `${selected.availableSlots} Slot`}
-              </p>
-            </div>
-          </div>
-        )}
       </div>
+
 
       {/* CTA Button */}
       <div className="px-5 pb-5 pt-4">

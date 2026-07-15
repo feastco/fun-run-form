@@ -6,6 +6,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string
   helperText?: string
   ref?: React.Ref<HTMLInputElement>
+  required?: boolean
 }
 
 export function Input({
@@ -16,13 +17,14 @@ export function Input({
   id,
   type = 'text',
   ref,
+  required,
   ...props
 }: InputProps) {
   return (
     <div className="w-full flex flex-col mb-4">
       {label && (
         <label htmlFor={id} className="font-medium text-[14px] text-[#374151] mb-[4px]">
-          {label}
+          {label} {required && <span className="text-danger">*</span>}
         </label>
       )}
       <input

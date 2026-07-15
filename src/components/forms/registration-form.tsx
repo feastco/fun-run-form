@@ -50,6 +50,7 @@ export function RegistrationForm({ categories, defaultCategoryId }: Registration
   const [selectedProvinceId, setSelectedProvinceId] = useState('')
   const [selectedCityId, setSelectedCityId] = useState('')
   const [selectedDistrictId, setSelectedDistrictId] = useState('')
+  const [selectedVillageId, setSelectedVillageId] = useState('')
 
   const [loadingCity, setLoadingCity] = useState(false)
   const [loadingDistrict, setLoadingDistrict] = useState(false)
@@ -83,7 +84,7 @@ export function RegistrationForm({ categories, defaultCategoryId }: Registration
     if (!selectedProvinceId) { setCities([]); setDistricts([]); setVillages([]); return }
     setLoadingCity(true)
     setCities([]); setDistricts([]); setVillages([])
-    setSelectedCityId(''); setSelectedDistrictId('')
+    setSelectedCityId(''); setSelectedDistrictId(''); setSelectedVillageId('')
     setValue('city', ''); setValue('district', ''); setValue('village', '')
     fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${selectedProvinceId}.json`)
       .then(r => r.json())
@@ -97,7 +98,7 @@ export function RegistrationForm({ categories, defaultCategoryId }: Registration
     if (!selectedCityId) { setDistricts([]); setVillages([]); return }
     setLoadingDistrict(true)
     setDistricts([]); setVillages([])
-    setSelectedDistrictId('')
+    setSelectedDistrictId(''); setSelectedVillageId('')
     setValue('district', ''); setValue('village', '')
     fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${selectedCityId}.json`)
       .then(r => r.json())
@@ -111,6 +112,7 @@ export function RegistrationForm({ categories, defaultCategoryId }: Registration
     if (!selectedDistrictId) { setVillages([]); return }
     setLoadingVillage(true)
     setVillages([])
+    setSelectedVillageId('')
     setValue('village', '')
     fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/villages/${selectedDistrictId}.json`)
       .then(r => r.json())
@@ -221,6 +223,7 @@ export function RegistrationForm({ categories, defaultCategoryId }: Registration
         <Select
           id="event_category_id"
           label="Pilih Kategori Lari"
+          required
           options={categoryOptions}
           error={errors.event_category_id?.message}
           {...register('event_category_id')}
@@ -238,29 +241,29 @@ export function RegistrationForm({ categories, defaultCategoryId }: Registration
           }
         />
 
-        <Input id="full_name" label="Nama Lengkap (Sesuai KTP)" placeholder="Masukkan nama lengkap Anda" error={errors.full_name?.message} {...register('full_name')} />
+        <Input id="full_name" label="Nama Lengkap (Sesuai KTP)" required placeholder="Masukkan nama lengkap Anda" error={errors.full_name?.message} {...register('full_name')} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 md:gap-6">
-          <Input id="email" type="email" label="Alamat Email" placeholder="contoh@domain.com" error={errors.email?.message} {...register('email')} />
-          <Input id="phone" type="tel" label="Nomor HP / WhatsApp" placeholder="0812xxxxxxxx" error={errors.phone?.message} {...register('phone')} />
+          <Input id="email" type="email" label="Alamat Email" required placeholder="contoh@domain.com" error={errors.email?.message} {...register('email')} />
+          <Input id="phone" type="tel" label="Nomor HP / WhatsApp" required placeholder="0812xxxxxxxx" error={errors.phone?.message} {...register('phone')} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 md:gap-6">
-          <Input id="nik" label="Nomor Induk Kependudukan (NIK)" placeholder="16 digit angka KTP" maxLength={16} error={errors.nik?.message} {...register('nik')} />
-          <Select id="gender" label="Jenis Kelamin" options={genderOptions} error={errors.gender?.message} {...register('gender')} />
+          <Input id="nik" label="Nomor Induk Kependudukan (NIK)" required placeholder="16 digit angka KTP" maxLength={16} error={errors.nik?.message} {...register('nik')} />
+          <Select id="gender" label="Jenis Kelamin" required options={genderOptions} error={errors.gender?.message} {...register('gender')} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 md:gap-6">
-          <Input id="birth_place" label="Tempat Lahir" placeholder="Kota kelahiran" error={errors.birth_place?.message} {...register('birth_place')} />
-          <Input id="birth_date" type="date" label="Tanggal Lahir" error={errors.birth_date?.message} {...register('birth_date')} />
+          <Input id="birth_place" label="Tempat Lahir" required placeholder="Kota kelahiran" error={errors.birth_place?.message} {...register('birth_place')} />
+          <Input id="birth_date" type="date" label="Tanggal Lahir" required error={errors.birth_date?.message} {...register('birth_date')} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 md:gap-6">
-          <Select id="nationality" label="Kewarganegaraan" options={nationalityOptions} error={errors.nationality?.message} {...register('nationality')} />
+          <Select id="nationality" label="Kewarganegaraan" required options={nationalityOptions} error={errors.nationality?.message} {...register('nationality')} />
           <Select id="blood_type" label="Golongan Darah" options={bloodTypeOptions} error={errors.blood_type?.message} {...register('blood_type')} />
         </div>
 
-        <Select id="jersey_size" label="Ukuran Jersey" options={jerseyOptions} error={errors.jersey_size?.message} {...register('jersey_size')} />
+        <Select id="jersey_size" label="Ukuran Jersey" required options={jerseyOptions} error={errors.jersey_size?.message} {...register('jersey_size')} />
         <p className="text-xs text-text-secondary -mt-3 mb-4 pl-1">* Ukuran lebar dan panjang jersey sudah tertera di setiap pilihan di atas.</p>
       </div>
 
@@ -325,16 +328,17 @@ export function RegistrationForm({ categories, defaultCategoryId }: Registration
           label="Desa / Kelurahan"
           required
           options={villageOptions}
-          value={''}
+          value={selectedVillageId}
           placeholder={loadingVillage ? 'Memuat...' : 'Ketik nama desa/kelurahan...'}
           disabled={!selectedDistrictId || loadingVillage}
           error={errors.village?.message}
-          onChange={(_, name) => {
+          onChange={(id, name) => {
+            setSelectedVillageId(id)
             setValue('village', name)
           }}
         />
 
-        <Input id="address" label="Alamat Lengkap" placeholder="Nama jalan, RT/RW, nomor rumah" error={errors.address?.message} {...register('address')} />
+        <Input id="address" label="Alamat Lengkap" required placeholder="Nama jalan, RT/RW, nomor rumah" error={errors.address?.message} {...register('address')} />
       </div>
 
       {/* Section 4: Kesehatan */}
@@ -391,7 +395,7 @@ export function RegistrationForm({ categories, defaultCategoryId }: Registration
         {/* Accordion sections */}
         {[
           {
-            emoji: '📋',
+            iconKey: 'pendaftaran',
             title: 'Peraturan Pendaftaran',
             items: [
               'Pendaftaran dilakukan melalui website resmi Fun Run 2026.',
@@ -403,7 +407,7 @@ export function RegistrationForm({ categories, defaultCategoryId }: Registration
             ],
           },
           {
-            emoji: '🏃',
+            iconKey: 'peserta',
             title: 'Ketentuan Peserta',
             items: [
               'Peserta hadir 1 jam sebelum waktu start.',
@@ -415,7 +419,7 @@ export function RegistrationForm({ categories, defaultCategoryId }: Registration
             ],
           },
           {
-            emoji: '🎽',
+            iconKey: 'racepack',
             title: 'Pengambilan Racepack',
             items: [
               'Racepack meliputi jersey, nomor BIB, dan material lainnya.',
@@ -427,7 +431,7 @@ export function RegistrationForm({ categories, defaultCategoryId }: Registration
             ],
           },
           {
-            emoji: '📅',
+            iconKey: 'jadwal',
             title: 'Jadwal Pengambilan Racepack',
             items: [
               'Kamis, 03 September 2026 · 09.00–15.00 WIB — Stadion Si Jalak Harupat',
@@ -436,7 +440,7 @@ export function RegistrationForm({ categories, defaultCategoryId }: Registration
             ],
           },
           {
-            emoji: '✅',
+            iconKey: 'persyaratan',
             title: 'Persyaratan Peserta',
             items: [
               'Terbuka untuk WNI dan WNA.',
@@ -447,7 +451,7 @@ export function RegistrationForm({ categories, defaultCategoryId }: Registration
             ],
           },
           {
-            emoji: '🏆',
+            iconKey: 'pemenang',
             title: 'Ketentuan Pemenang',
             items: [
               'Pemenang ditentukan berdasarkan catatan waktu terbaik per kategori.',
@@ -459,28 +463,63 @@ export function RegistrationForm({ categories, defaultCategoryId }: Registration
               'WNA boleh berpartisipasi, namun hak podium kategori Nasional hanya untuk WNI.',
             ],
           },
-        ].map((section) => (
-          <details key={section.title} className="group mb-2 border border-gray-200 rounded-lg overflow-hidden">
-            <summary className="flex items-center justify-between px-4 py-3 cursor-pointer bg-white hover:bg-gray-50 transition-colors select-none">
-              <span className="font-semibold text-[14px] text-text-primary flex items-center gap-2">
-                <span>{section.emoji}</span> {section.title}
-              </span>
-              <svg className="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+        ].map((section) => {
+          const accordionIcons: Record<string, React.ReactNode> = {
+            pendaftaran: (
+              <svg className="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-            </summary>
-            <div className="px-4 pb-4 pt-2 bg-gray-50 border-t border-gray-100">
-              <ul className="space-y-1.5">
-                {section.items.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-[13px] text-text-secondary leading-relaxed">
-                    <span className="text-primary font-bold mt-0.5 flex-shrink-0">•</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </details>
-        ))}
+            ),
+            peserta: (
+              <svg className="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            ),
+            racepack: (
+              <svg className="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              </svg>
+            ),
+            jadwal: (
+              <svg className="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            ),
+            persyaratan: (
+              <svg className="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            ),
+            pemenang: (
+              <svg className="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5a2 2 0 10-2 2h2zm-2 4h4M9 14h6" />
+              </svg>
+            ),
+          }
+
+          return (
+            <details key={section.title} className="group mb-2 border border-gray-200 rounded-lg overflow-hidden">
+              <summary className="flex items-center justify-between px-4 py-3 cursor-pointer bg-white hover:bg-gray-50 transition-colors select-none">
+                <span className="font-semibold text-[14px] text-text-primary flex items-center gap-2">
+                  <span>{accordionIcons[section.iconKey]}</span> {section.title}
+                </span>
+                <svg className="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <div className="px-4 pb-4 pt-2 bg-gray-50 border-t border-gray-100">
+                <ul className="space-y-1.5">
+                  {section.items.map((item, i) => (
+                    <li key={i} className="flex items-start gap-2 text-[13px] text-text-secondary leading-relaxed">
+                      <span className="text-primary font-bold mt-0.5 flex-shrink-0">•</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </details>
+          )
+        })}
       </div>
 
       {/* Section 7: Pernyataan */}
@@ -526,3 +565,4 @@ export function RegistrationForm({ categories, defaultCategoryId }: Registration
     </form>
   )
 }
+

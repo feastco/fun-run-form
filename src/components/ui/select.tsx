@@ -7,6 +7,7 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   helperText?: string
   ref?: React.Ref<HTMLSelectElement>
   options: { value: string; label: string }[]
+  required?: boolean
 }
 
 export function Select({
@@ -17,13 +18,14 @@ export function Select({
   id,
   options,
   ref,
+  required,
   ...props
 }: SelectProps) {
   return (
     <div className="w-full flex flex-col mb-4">
       {label && (
         <label htmlFor={id} className="font-medium text-[14px] text-[#374151] mb-[4px]">
-          {label}
+          {label} {required && <span className="text-danger">*</span>}
         </label>
       )}
       <select
