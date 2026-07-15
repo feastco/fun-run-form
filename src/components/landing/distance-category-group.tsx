@@ -36,9 +36,12 @@ export function DistanceCategoryGroup({ distanceKm, categories }: DistanceCatego
   const distanceIcons: Record<number, React.ReactNode> = {
     5: (
       <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-        <circle cx="15" cy="4" r="2" />
-        <path d="M7 13h5l2-3.5M12 9l2-4h3" />
-        <path d="M9 20l2.5-5.5.5-4M13 10.5l2.5 4.5 1 5" />
+        <circle cx="15" cy="5" r="2" />
+        <path d="M12 7h3v5.5" />
+        <path d="M15 7.5l3.5 3" />
+        <path d="M12 7.5L9 10" />
+        <path d="M12 12.5l-3 4.5v4" />
+        <path d="M15 12.5l2 2.5-1.5 4.5" />
       </svg>
     ),
     10: (
@@ -59,9 +62,12 @@ export function DistanceCategoryGroup({ distanceKm, categories }: DistanceCatego
   const gradientClass = distanceColors[distanceKm] ?? 'from-primary to-secondary'
   const icon = distanceIcons[distanceKm] ?? (
     <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-      <circle cx="15" cy="4" r="2" />
-      <path d="M7 13h5l2-3.5M12 9l2-4h3" />
-      <path d="M9 20l2.5-5.5.5-4M13 10.5l2.5 4.5 1 5" />
+      <circle cx="15" cy="5" r="2" />
+      <path d="M12 7h3v5.5" />
+      <path d="M15 7.5l3.5 3" />
+      <path d="M12 7.5L9 10" />
+      <path d="M12 12.5l-3 4.5v4" />
+      <path d="M15 12.5l2 2.5-1.5 4.5" />
     </svg>
   )
 

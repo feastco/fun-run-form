@@ -6,12 +6,19 @@ import { env } from '@/lib/env'
 export const revalidate = 0 // Disable cache for status lookups
 
 interface PageProps {
-  searchParams: Promise<{ reg?: string }>
+  searchParams: Promise<{ reg?: string; order_id?: string }>
 }
 
 export default async function StatusPage(props: PageProps) {
   const searchParams = await props.searchParams
-  const initialReg = searchParams.reg
+  let initialReg = searchParams.reg
+
+  if (!initialReg && searchParams.order_id) {
+    const parts = searchParams.order_id.split('-')
+    if (parts[0] === 'EVT' && parts.length >= 3) {
+      initialReg = `${parts[1]}-${parts[2]}`
+    }
+  }
 
   const clientKey = env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY
   const isSandbox = clientKey.startsWith('SB-')
