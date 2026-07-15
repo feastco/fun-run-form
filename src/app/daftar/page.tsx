@@ -65,7 +65,7 @@ export default async function RegisterPage(props: PageProps) {
   const Navbar = (
     <nav className="sticky top-0 z-50 h-16 bg-secondary text-white flex items-center justify-between px-6 md:px-12 shadow-default">
       <Link href="/" className="text-xl font-extrabold tracking-tight hover:text-primary transition-colors">
-        BEDAS<span className="text-primary">RUN</span>
+        FUN<span className="text-primary">RUN</span>
       </Link>
       <Link href="/status" className="text-[14px] text-gray-300 hover:text-white font-medium transition-colors">
         Cek Status

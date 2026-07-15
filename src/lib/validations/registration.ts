@@ -23,7 +23,13 @@ export const registrationSchema = z.object({
       tenYearsAgo.setFullYear(tenYearsAgo.getFullYear() - 10)
       return birthDate <= tenYearsAgo
     }, { message: 'Peserta harus berusia minimal 10 tahun.' }),
-  nationality: z.string().default('WNI'),
+  nationality: z.enum(['WNI', 'WNA'], {
+    errorMap: () => ({ message: 'Pilih kewarganegaraan.' }),
+  }),
+  province: z.string().min(1, 'Pilih provinsi.'),
+  city: z.string().min(1, 'Pilih kota/kabupaten.'),
+  district: z.string().min(1, 'Pilih kecamatan.'),
+  village: z.string().min(1, 'Pilih desa/kelurahan.'),
   address: z.string().min(10, 'Alamat lengkap minimal 10 karakter.'),
   blood_type: z.enum(['A', 'B', 'AB', 'O']).optional().or(z.literal('')),
   medical_history: z.string().max(1000, 'Riwayat penyakit maksimal 1000 karakter.').optional(),
@@ -34,6 +40,15 @@ export const registrationSchema = z.object({
   emergency_contact_phone: z.string()
     .min(1, 'Nomor HP kontak darurat harus diisi.')
     .regex(/^\+?[0-9]{10,15}$/, 'Nomor HP harus 10-15 digit.'),
+  agree_data_truth: z.literal(true, {
+    errorMap: () => ({ message: 'Anda harus menyatakan kebenaran data.' }),
+  }),
+  agree_healthy: z.literal(true, {
+    errorMap: () => ({ message: 'Anda harus menyatakan kondisi sehat.' }),
+  }),
+  agree_terms: z.literal(true, {
+    errorMap: () => ({ message: 'Anda harus menyetujui seluruh peraturan dan ketentuan.' }),
+  }),
 })
 
 export type RegistrationFormInput = z.infer<typeof registrationSchema>

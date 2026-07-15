@@ -1,6 +1,7 @@
 import { getActiveEvents } from '@/services/event.service'
 import { HeroSection } from '@/components/landing/hero-section'
 import { CategoryCard } from '@/components/landing/category-card'
+import { StatusQuickSearch } from '@/components/landing/status-quick-search'
 import Link from 'next/link'
 
 export const revalidate = 0 // Disable cache for real-time quota count
@@ -42,10 +43,10 @@ export default async function LandingPage() {
   const Navbar = (
     <nav className="sticky top-0 z-50 h-16 bg-secondary text-white flex items-center justify-between px-6 md:px-12 shadow-default">
       <Link href="/" className="text-xl font-extrabold tracking-tight hover:text-primary transition-colors">
-        BEDAS<span className="text-primary">RUN</span>
+        FUN<span className="text-primary">RUN</span>
       </Link>
-      <Link href="/admin/login" className="text-[14px] text-gray-300 hover:text-white font-medium transition-colors">
-        Portal Admin
+      <Link href="/status" className="text-[14px] text-gray-300 hover:text-white font-medium transition-colors">
+        Cek Status
       </Link>
     </nav>
   )
@@ -91,6 +92,11 @@ export default async function LandingPage() {
               eventDate={activeEvent.event_date}
               location={activeEvent.location}
             />
+
+            {/* Quick Status Search */}
+            <div className="mb-10">
+              <StatusQuickSearch />
+            </div>
 
             <div className="mb-8">
               <h2 className="text-3xl font-extrabold text-text-primary tracking-tight mb-2">
