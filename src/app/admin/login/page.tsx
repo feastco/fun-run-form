@@ -50,7 +50,7 @@ export default function AdminLoginPage() {
     <div className="min-h-screen bg-secondary flex flex-col justify-center py-12 px-6 lg:px-8 font-sans">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <Link href="/" className="inline-block text-2xl font-extrabold tracking-tight text-white mb-6 hover:text-primary transition-colors">
-          BEDAS<span className="text-primary">RUN</span>
+          FUN<span className="text-primary">RUN</span>
         </Link>
       </div>
 

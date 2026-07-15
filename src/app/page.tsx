@@ -117,8 +117,8 @@ export default async function LandingPage() {
         {activeEvent ? (
           <>
             <HeroSection
-              eventName={activeEvent.name}
-              description={activeEvent.description}
+              eventName={activeEvent.name.replace(/Bedas Run/gi, 'Fun Run')}
+              description={activeEvent.description?.replace(/Bedas Run/gi, 'Fun Run') ?? ''}
               eventDate={activeEvent.event_date}
               location={activeEvent.location}
             />
@@ -148,25 +148,17 @@ export default async function LandingPage() {
             </div>
 
             {/* Category Groups */}
-            <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-              <div>
-                <h2 className="text-3xl font-extrabold text-text-primary tracking-tight mb-1">
-                  Pilih Kategori Lari
-                </h2>
-                <p className="text-text-secondary text-sm">
-                  Pilih jarak dan kategori yang sesuai kemampuan Anda. Atau{' '}
-                  <Link href="/daftar" className="text-primary font-semibold hover:underline">
-                    daftar langsung
-                  </Link>{' '}
-                  dan pilih kategori di formulir.
-                </p>
-              </div>
-              <Link
-                href="/daftar"
-                className="flex-shrink-0 inline-flex items-center gap-2 px-5 h-10 border-2 border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-all text-sm"
-              >
-                Lihat Semua Kategori →
-              </Link>
+            <div className="mb-8">
+              <h2 className="text-3xl font-extrabold text-text-primary tracking-tight mb-1">
+                Pilih Kategori Lari
+              </h2>
+              <p className="text-text-secondary text-sm">
+                Pilih jarak dan kategori yang sesuai kemampuan Anda. Atau{' '}
+                <Link href="/daftar" className="text-primary font-semibold hover:underline">
+                  daftar langsung
+                </Link>{' '}
+                dan pilih kategori di formulir.
+              </p>
             </div>
 
             {sortedDistances.length > 0 ? (

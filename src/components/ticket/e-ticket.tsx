@@ -31,7 +31,7 @@ export function ETicket({
       {/* Header */}
       <div className="text-center pb-6 border-b-2 border-dashed border-gray-200">
         <h3 className="text-xl font-extrabold tracking-tight text-secondary">
-          BEDAS<span className="text-primary">RUN</span>
+          FUN<span className="text-primary">RUN</span>
         </h3>
         <p className="text-xs text-text-secondary uppercase mt-1 font-semibold tracking-wider">
           Official E-Ticket

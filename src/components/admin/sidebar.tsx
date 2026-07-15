@@ -41,7 +41,7 @@ export function Sidebar() {
       {/* Header */}
       <div className="h-16 flex items-center px-6 border-b border-gray-800">
         <Link href="/" className="text-lg font-extrabold tracking-tight">
-          BEDAS<span className="text-primary">RUN</span> <span className="text-xs bg-primary/20 text-primary px-1.5 py-0.5 rounded font-mono ml-1">ADMIN</span>
+          FUN<span className="text-primary">RUN</span> <span className="text-xs bg-primary/20 text-primary px-1.5 py-0.5 rounded font-mono ml-1">ADMIN</span>
         </Link>
       </div>
 

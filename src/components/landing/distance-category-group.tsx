@@ -33,22 +33,38 @@ export function DistanceCategoryGroup({ distanceKm, categories }: DistanceCatego
     }
   }
 
-  const distanceIcons: Record<number, string> = {
-    5: '🏃',
-    10: '🏅',
-    21: '🥇',
-    42: '🏆',
+  const distanceIcons: Record<number, React.ReactNode> = {
+    5: (
+      <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+        <path d="M18.8 6c0-.5-.4-.9-.9-.9h-1.6c-.6 0-1.1.4-1.2 1l-.8 4.2c-.1.5.3 1 .8 1h1.5c.5 0 .9-.4 1-.9l1.2-5.4Z" />
+        <path d="M4 14.5a2.5 2.5 0 1 1 5 0 2.5 2.5 0 0 1-5 0Z" />
+        <path d="M11.5 16h6" />
+        <path d="m14 11 1.5 5" />
+        <path d="m9.5 11-1.5 5" />
+        <path d="M9.7 7.7a2.5 2.5 0 0 1 3.5.5l1.6 2c.4.5 1 .8 1.7.8h1" />
+      </svg>
+    ),
+    10: (
+      <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+        <circle cx="12" cy="8" r="6" />
+        <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
+      </svg>
+    ),
   }
 
   const distanceColors: Record<number, string> = {
-    5: 'from-orange-500 to-primary',
+    5: 'from-secondary to-primary',
     10: 'from-secondary to-blue-600',
     21: 'from-purple-600 to-indigo-600',
     42: 'from-yellow-500 to-orange-600',
   }
 
   const gradientClass = distanceColors[distanceKm] ?? 'from-primary to-secondary'
-  const icon = distanceIcons[distanceKm] ?? '🏃'
+  const icon = distanceIcons[distanceKm] ?? (
+    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+    </svg>
+  )
 
   const totalQuota = categories.reduce((sum, c) => sum + c.quota, 0)
   const totalAvailable = categories.reduce((sum, c) => sum + c.availableSlots, 0)
@@ -58,10 +74,12 @@ export function DistanceCategoryGroup({ distanceKm, categories }: DistanceCatego
       {/* Distance Header */}
       <div className={`bg-gradient-to-r ${gradientClass} px-6 pt-6 pb-5 text-white`}>
         <div className="flex items-center justify-between mb-1">
-          <span className="text-4xl">{icon}</span>
+          <span className="text-4xl flex items-center justify-center">{icon}</span>
           <span className="text-5xl font-black opacity-20">{distanceKm}K</span>
         </div>
-        <h3 className="text-2xl font-black tracking-tight">{distanceKm}K Fun Run</h3>
+        <h3 className="text-2xl font-black tracking-tight">
+          {distanceKm}K {distanceKm === 10 ? 'Competitive Run' : 'Fun Run'}
+        </h3>
         <p className="text-lg font-bold mt-1 text-white">{formatCurrency(categories[0]?.price ?? 0)}</p>
         <p className="text-white/80 text-xs mt-1">
           Kuota tersisa: <span className="font-bold text-white">{totalAvailable}</span> / {totalQuota} slot
