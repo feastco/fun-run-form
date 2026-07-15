@@ -207,7 +207,13 @@ export function RegistrationForm({ categories, defaultCategoryId }: Registration
   const villageOptions = villages.map(v => ({ value: v.id, label: v.name }))
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+    <form
+      onSubmit={handleSubmit(onSubmit, (errors) => {
+        console.warn('Form validation failed:', errors)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      })}
+      className="space-y-8"
+    >
       {errorMsg && (
         <div className="bg-danger/10 border border-danger text-danger p-4 rounded-default text-[14px]">
           {errorMsg}
@@ -479,10 +485,9 @@ export function RegistrationForm({ categories, defaultCategoryId }: Registration
               </svg>
             ),
             peserta: (
-              <svg className="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                <circle cx="15" cy="4" r="2" />
-                <path d="M7 13h5l2-3.5M12 9l2-4h3" />
-                <path d="M9 20l2.5-5.5.5-4M13 10.5l2.5 4.5 1 5" />
+              <svg className="w-4 h-4 text-text-secondary" fill="currentColor" viewBox="0 0 24 24">
+                <circle cx="14" cy="3.5" r="2" />
+                <path d="M18.6 9.8c-.3-.2-.7-.1-.9.2l-2.2 3.1-3-3.7c-.3-.4-.8-.6-1.3-.6H7.5C6.7 8.8 6 9.5 6 10.3s.7 1.5 1.5 1.5h2.9l1.8 2.2-3.6 4.3c-.3.3-.3.8 0 1.1.2.2.4.3.6.3.2 0 .4-.1.5-.2l4.2-5 3.3 4.1c.2.2.4.3.7.3.2 0 .4-.1.5-.2.4-.3.4-.9.1-1.3l-3.2-3.9 1.9-2.7 1.9 1c.1 0 .2.1.3.1.3 0 .6-.1.8-.4.3-.4.2-1-.2-1.3z" />
               </svg>
             ),
             racepack: (

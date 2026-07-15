@@ -250,7 +250,7 @@ export function TransactionTable() {
                 {filteredTransactions.map((tx) => (
                   <tr key={tx.id} className="text-text-primary hover:bg-surface transition-all">
                     <td className="p-4 pl-6 font-mono font-bold text-xs text-secondary">{tx.order_id}</td>
-                    <td className="p-4 font-mono text-xs text-text-secondary">{tx.registration_number}</td>
+                    <td className="p-4 font-bold text-sm text-text-secondary">{tx.registration_number}</td>
                     <td className="p-4 font-semibold">{tx.full_name}</td>
                     <td className="p-4 text-xs text-text-secondary font-medium">{tx.category_name}</td>
                     <td className="p-4 font-semibold text-secondary">{formatCurrency(tx.amount)}</td>

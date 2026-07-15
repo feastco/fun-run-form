@@ -35,13 +35,9 @@ export function DistanceCategoryGroup({ distanceKm, categories }: DistanceCatego
 
   const distanceIcons: Record<number, React.ReactNode> = {
     5: (
-      <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-        <circle cx="15" cy="5" r="2" />
-        <path d="M12 7h3v5.5" />
-        <path d="M15 7.5l3.5 3" />
-        <path d="M12 7.5L9 10" />
-        <path d="M12 12.5l-3 4.5v4" />
-        <path d="M15 12.5l2 2.5-1.5 4.5" />
+      <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <circle cx="14" cy="3.5" r="2" />
+        <path d="M18.6 9.8c-.3-.2-.7-.1-.9.2l-2.2 3.1-3-3.7c-.3-.4-.8-.6-1.3-.6H7.5C6.7 8.8 6 9.5 6 10.3s.7 1.5 1.5 1.5h2.9l1.8 2.2-3.6 4.3c-.3.3-.3.8 0 1.1.2.2.4.3.6.3.2 0 .4-.1.5-.2l4.2-5 3.3 4.1c.2.2.4.3.7.3.2 0 .4-.1.5-.2.4-.3.4-.9.1-1.3l-3.2-3.9 1.9-2.7 1.9 1c.1 0 .2.1.3.1.3 0 .6-.1.8-.4.3-.4.2-1-.2-1.3z" />
       </svg>
     ),
     10: (
@@ -61,13 +57,9 @@ export function DistanceCategoryGroup({ distanceKm, categories }: DistanceCatego
 
   const gradientClass = distanceColors[distanceKm] ?? 'from-primary to-secondary'
   const icon = distanceIcons[distanceKm] ?? (
-    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-      <circle cx="15" cy="5" r="2" />
-      <path d="M12 7h3v5.5" />
-      <path d="M15 7.5l3.5 3" />
-      <path d="M12 7.5L9 10" />
-      <path d="M12 12.5l-3 4.5v4" />
-      <path d="M15 12.5l2 2.5-1.5 4.5" />
+    <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+      <circle cx="14" cy="3.5" r="2" />
+      <path d="M18.6 9.8c-.3-.2-.7-.1-.9.2l-2.2 3.1-3-3.7c-.3-.4-.8-.6-1.3-.6H7.5C6.7 8.8 6 9.5 6 10.3s.7 1.5 1.5 1.5h2.9l1.8 2.2-3.6 4.3c-.3.3-.3.8 0 1.1.2.2.4.3.6.3.2 0 .4-.1.5-.2l4.2-5 3.3 4.1c.2.2.4.3.7.3.2 0 .4-.1.5-.2.4-.3.4-.9.1-1.3l-3.2-3.9 1.9-2.7 1.9 1c.1 0 .2.1.3.1.3 0 .6-.1.8-.4.3-.4.2-1-.2-1.3z" />
     </svg>
   )
 

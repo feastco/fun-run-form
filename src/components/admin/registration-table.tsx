@@ -234,7 +234,7 @@ export function RegistrationTable() {
               <tbody className="divide-y divide-gray-50">
                 {registrations.map((reg) => (
                   <tr key={reg.id} className="text-text-primary hover:bg-surface transition-all">
-                    <td className="p-4 pl-6 font-mono font-bold text-xs text-secondary">{reg.registration_number}</td>
+                    <td className="p-4 pl-6 font-bold text-sm text-secondary">{reg.registration_number}</td>
                     <td className="p-4 font-semibold">{reg.full_name}</td>
                     <td className="p-4 text-xs text-text-secondary font-medium">{reg.email}</td>
                     <td className="p-4 text-xs text-text-secondary font-medium">{reg.phone}</td>

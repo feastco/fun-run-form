@@ -37,7 +37,7 @@ export function Sidebar() {
   ]
 
   return (
-    <div className="w-60 bg-secondary text-white flex flex-col min-h-screen border-r border-gray-800 print:hidden flex-shrink-0">
+    <div className="w-60 bg-secondary text-white flex flex-col h-screen sticky top-0 border-r border-gray-800 print:hidden shrink-0">
       {/* Header */}
       <div className="h-16 flex items-center px-6 border-b border-gray-800">
         <Link href="/" className="text-lg font-extrabold tracking-tight">
@@ -46,7 +46,7 @@ export function Sidebar() {
       </div>
 
       {/* Nav Menu */}
-      <nav className="flex-grow py-6 space-y-1">
+      <nav className="grow py-6 space-y-1">
         {menuItems.map((item) => {
           const isActive = pathname === item.path
           const Icon = item.icon
@@ -72,7 +72,7 @@ export function Sidebar() {
         <button
           onClick={handleLogout}
           disabled={isLoggingOut}
-          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-400 hover:text-white hover:bg-[#E63946]/10 hover:text-[#E63946] rounded-lg transition-all cursor-pointer disabled:opacity-50"
+          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-400 hover:bg-danger/10 hover:text-danger rounded-lg transition-all cursor-pointer disabled:opacity-50"
         >
           <LogOut className="w-5 h-5" />
           {isLoggingOut ? 'Keluar...' : 'Keluar'}

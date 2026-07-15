@@ -78,7 +78,7 @@ export function RegistrationDetail({ registrationId, onClose }: RegistrationDeta
               Detail Pendaftaran
             </h3>
             {detail && (
-              <p className="text-xs text-text-secondary font-mono mt-0.5">
+              <p className="text-xs text-text-secondary mt-0.5">
                 Reg No: <span className="font-bold text-secondary">{detail.registration_number}</span>
               </p>
             )}

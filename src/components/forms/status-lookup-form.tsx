@@ -97,16 +97,16 @@ export function StatusLookupForm({ initialReg }: StatusLookupFormProps) {
     if (win.snap) {
       win.snap.pay(reg.snap_token, {
         onSuccess: () => {
-          handleSearch()
+          window.location.href = `/status?reg=${reg.registration_number}`
         },
         onPending: () => {
-          handleSearch()
+          window.location.href = `/status?reg=${reg.registration_number}`
         },
         onError: () => {
           setPaymentError('Pembayaran gagal dilakukan. Silakan coba lagi.')
         },
         onClose: () => {
-          handleSearch()
+          window.location.href = `/status?reg=${reg.registration_number}`
         }
       })
     } else if (reg.snap_redirect_url) {
