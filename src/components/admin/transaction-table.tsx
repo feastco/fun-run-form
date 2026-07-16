@@ -150,16 +150,16 @@ export function TransactionTable() {
     switch (status) {
       case 'settlement':
       case 'capture':
-        return 'bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20'
+        return 'bg-[#065F46]/5 text-[#065F46] border border-[#047857]/20'
       case 'pending':
-        return 'bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20'
+        return 'bg-[#92400E]/5 text-[#92400E] border border-[#B45309]/20'
       case 'expire':
-        return 'bg-gray-100 text-gray-500 border border-gray-200'
+        return 'bg-gray-50 text-gray-600 border border-gray-200'
       case 'deny':
       case 'cancel':
-        return 'bg-[#E63946]/10 text-[#E63946] border border-[#E63946]/20'
+        return 'bg-[#991B1B]/5 text-[#991B1B] border border-[#B91C1C]/20'
       default:
-        return 'bg-gray-100 text-gray-500'
+        return 'bg-gray-50 text-gray-600'
     }
   }
 

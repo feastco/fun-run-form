@@ -9,31 +9,46 @@ export async function GET() {
     if (!authorized) return response
 
 
-    // 1. Get total, paid, pending registrations
-    const { count: totalRegistrations, error: errTotal } = await supabase
-      .from('registrations')
-      .select('*', { count: 'exact', head: true })
+    // Execute all queries concurrently to reduce response latency significantly
+    const [
+      totalResult,
+      paidResult,
+      pendingResult,
+      revenueResult,
+      categoriesResult,
+      recentResult
+    ] = await Promise.all([
+      supabase.from('registrations').select('*', { count: 'exact', head: true }),
+      supabase.from('registrations').select('*', { count: 'exact', head: true }).in('registration_status', ['paid', 'claimed']),
+      supabase.from('registrations').select('*', { count: 'exact', head: true }).eq('registration_status', 'pending_payment'),
+      supabase.from('transactions').select('amount').eq('transaction_status', 'settlement'),
+      supabase.from('event_categories').select('id, name, quota, reserved_count').eq('is_active', true),
+      supabase.from('registrations')
+        .select(`
+          id,
+          registration_number,
+          full_name,
+          created_at,
+          registration_status,
+          event_categories (
+            name
+          )
+        `)
+        .order('created_at', { ascending: false })
+        .limit(5)
+    ])
 
-    const { count: paidRegistrations, error: errPaid } = await supabase
-      .from('registrations')
-      .select('*', { count: 'exact', head: true })
-      .in('registration_status', ['paid', 'claimed'])
-
-    const { count: pendingRegistrations, error: errPending } = await supabase
-      .from('registrations')
-      .select('*', { count: 'exact', head: true })
-      .eq('registration_status', 'pending_payment')
+    const { count: totalRegistrations, error: errTotal } = totalResult
+    const { count: paidRegistrations, error: errPaid } = paidResult
+    const { count: pendingRegistrations, error: errPending } = pendingResult
+    const { data: revenueData, error: errRevenue } = revenueResult
+    const { data: categories, error: errCategories } = categoriesResult
+    const { data: recentData, error: errRecent } = recentResult
 
     if (errTotal || errPaid || errPending) {
       console.error('[Dashboard API] Error fetching registration counts:', { errTotal, errPaid, errPending })
       return NextResponse.json({ success: false, message: 'Gagal memuat statistik pendaftaran.' }, { status: 500 })
     }
-
-    // 2. Get total revenue (sum of transaction amounts where status is settlement)
-    const { data: revenueData, error: errRevenue } = await supabase
-      .from('transactions')
-      .select('amount')
-      .eq('transaction_status', 'settlement')
 
     if (errRevenue) {
       console.error('[Dashboard API] Error fetching revenue:', errRevenue)
@@ -42,32 +57,10 @@ export async function GET() {
 
     const totalRevenue = (revenueData || []).reduce((acc: number, item: any) => acc + (item.amount || 0), 0)
 
-    // 3. Get category quotas
-    const { data: categories, error: errCategories } = await supabase
-      .from('event_categories')
-      .select('id, name, quota, reserved_count')
-      .eq('is_active', true)
-
     if (errCategories) {
       console.error('[Dashboard API] Error fetching categories:', errCategories)
       return NextResponse.json({ success: false, message: 'Gagal memuat data kuota kategori.' }, { status: 500 })
     }
-
-    // 4. Get recent registrations (limit 5)
-    const { data: recentData, error: errRecent } = await supabase
-      .from('registrations')
-      .select(`
-        id,
-        registration_number,
-        full_name,
-        created_at,
-        registration_status,
-        event_categories (
-          name
-        )
-      `)
-      .order('created_at', { ascending: false })
-      .limit(5)
 
     if (errRecent) {
       console.error('[Dashboard API] Error fetching recent registrations:', errRecent)

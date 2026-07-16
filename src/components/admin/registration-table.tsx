@@ -96,17 +96,17 @@ export function RegistrationTable() {
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
       case 'paid':
-        return 'bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20'
+        return 'bg-[#065F46]/5 text-[#065F46] border border-[#047857]/20'
       case 'claimed':
-        return 'bg-indigo-50 text-indigo-600 border border-indigo-100'
+        return 'bg-indigo-50/70 text-[#3730A3] border border-indigo-100'
       case 'pending_payment':
-        return 'bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20'
+        return 'bg-[#92400E]/5 text-[#92400E] border border-[#B45309]/20'
       case 'expired':
-        return 'bg-gray-100 text-gray-500 border border-gray-200'
+        return 'bg-gray-50 text-gray-600 border border-gray-200'
       case 'cancelled':
-        return 'bg-[#E63946]/10 text-[#E63946] border border-[#E63946]/20'
+        return 'bg-[#991B1B]/5 text-[#991B1B] border border-[#B91C1C]/20'
       default:
-        return 'bg-gray-100 text-gray-500'
+        return 'bg-gray-50 text-gray-600'
     }
   }
 
@@ -150,6 +150,7 @@ export function RegistrationTable() {
                 setSelectedCategory(e.target.value)
                 setCurrentPage(1)
               }}
+              aria-label="Filter berdasarkan Kategori"
               className="w-full px-4 h-11 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF4D00]/30 focus:border-[#FF4D00] text-text-primary text-sm transition-all cursor-pointer bg-white"
             >
               <option value="">Semua Kategori</option>
@@ -168,6 +169,7 @@ export function RegistrationTable() {
                 setSelectedStatus(e.target.value)
                 setCurrentPage(1)
               }}
+              aria-label="Filter berdasarkan Status"
               className="w-full px-4 h-11 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF4D00]/30 focus:border-[#FF4D00] text-text-primary text-sm transition-all cursor-pointer bg-white"
             >
               <option value="">Semua Status</option>

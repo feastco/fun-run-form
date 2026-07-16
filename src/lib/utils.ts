@@ -34,3 +34,19 @@ export function formatDate(dateString: string): string {
     return dateString
   }
 }
+
+export function formatDateTime(dateString: string): string {
+  try {
+    const date = new Date(dateString)
+    return new Intl.DateTimeFormat('id-ID', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    }).format(date) + ' WIB'
+  } catch {
+    return dateString
+  }
+}
