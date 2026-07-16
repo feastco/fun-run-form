@@ -87,12 +87,17 @@ export function DistanceCategoryGroup({ distanceKm, categories }: DistanceCatego
 
       {/* Category Selector */}
       <div className="px-5 pt-5 flex-1">
-        <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
+        <label 
+          htmlFor={`category-select-${distanceKm}`}
+          className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2"
+        >
           Pilih Kategori {distanceKm}K
         </label>
         <select
+          id={`category-select-${distanceKm}`}
           value={selectedId}
           onChange={(e) => setSelectedId(e.target.value)}
+          aria-label={`Pilih Kategori ${distanceKm}K`}
           className="w-full px-3 h-11 rounded-lg border border-gray-200 text-sm text-text-primary bg-white focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all cursor-pointer font-semibold"
         >
           <option value="" disabled>-- Pilih Kategori {distanceKm}K --</option>

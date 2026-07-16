@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #FF4D00;
-  --color-primary-hover: #E64500;
+  --color-primary: #C23A00;
+  --color-primary-hover: #A03000;
   --color-secondary: #1A1A2E;
   --color-danger: #E63946;
   --color-success: #10B981;
@@ -11,7 +11,7 @@
   --color-background-custom: #FFFFFF;
   --color-surface: #F9FAFB;
   --color-text-primary: #111827;
-  --color-text-secondary: #6B7280;
+  --color-text-secondary: #4B5563;
   
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
   
