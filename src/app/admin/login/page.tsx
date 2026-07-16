@@ -48,7 +48,7 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-secondary flex flex-col justify-center py-12 px-6 lg:px-8 font-sans">
+    <main className="min-h-screen bg-secondary flex flex-col justify-center py-12 px-6 lg:px-8 font-sans">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <Link href="/" className="inline-block text-2xl font-extrabold tracking-tight text-white mb-6 hover:text-primary transition-colors">
           FUN<span className="text-primary">RUN</span>
@@ -99,13 +99,14 @@ export default function AdminLoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-4 pr-10 h-11 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-text-primary placeholder-gray-400 text-sm transition-all"
+                  className="w-full pl-4 pr-12 h-11 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-text-primary placeholder-gray-400 text-sm transition-all"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-text-primary focus:outline-none cursor-pointer"
+                  aria-label={showPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+                  className="absolute right-1 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:text-text-primary hover:bg-gray-50 focus:outline-none cursor-pointer rounded-lg transition-all"
                 >
                   {showPassword ? (
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -139,6 +140,6 @@ export default function AdminLoginPage() {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   )
 }

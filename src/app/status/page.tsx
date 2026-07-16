@@ -52,7 +52,7 @@ export default async function StatusPage(props: PageProps) {
       <Script
         src={snapScriptUrl}
         data-client-key={clientKey}
-        strategy="afterInteractive"
+        strategy="lazyOnload"
       />
       {Navbar}
       <main className="flex-grow max-w-4xl mx-auto px-6 py-12 w-full print:py-0 print:px-0">
