@@ -13,7 +13,7 @@
   --color-text-primary: #111827;
   --color-text-secondary: #4B5563;
   
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-sans), system-ui, -apple-system, sans-serif;
   
   --radius-default: 8px;
   --radius-card: 12px;
