@@ -60,14 +60,14 @@ export async function GET(req: NextRequest) {
 
     // Filter sensitive fields and return mapped data
     const registrations = (data || []).map((reg: any) => {
-      const isPaid = reg.registration_status === 'paid'
+      const isPaid = reg.registration_status === 'paid' || reg.registration_status === 'claimed'
       
       return {
         id: reg.id,
         registration_number: reg.registration_number,
         full_name: reg.full_name,
         registration_status: reg.registration_status,
-        qr_code_token: isPaid ? reg.qr_code_token : null, // Security: only expose qr_code_token if paid
+        qr_code_token: isPaid ? reg.qr_code_token : null, // Security: only expose qr_code_token if paid or claimed
         created_at: reg.created_at,
         event_category_id: reg.event_category_id,
         event_name: reg.events?.name || '',

@@ -100,7 +100,19 @@ export async function GET() {
         escapeCSV(reg.event_categories?.name || ''),
         escapeCSV(reg.emergency_contact_name),
         escapeCSV(reg.emergency_contact_phone),
-        escapeCSV(reg.registration_status),
+        escapeCSV(
+          reg.registration_status === 'paid'
+            ? 'Lunas'
+            : reg.registration_status === 'claimed'
+            ? 'Lunas (Racepack Diambil)'
+            : reg.registration_status === 'pending_payment'
+            ? 'Menunggu Pembayaran'
+            : reg.registration_status === 'expired'
+            ? 'Kedaluwarsa'
+            : reg.registration_status === 'cancelled'
+            ? 'Dibatalkan'
+            : reg.registration_status
+        ),
         escapeCSV(reg.created_at),
       ]
       csvRows.push(row.join(','))

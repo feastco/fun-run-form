@@ -17,7 +17,7 @@ export async function GET() {
     const { count: paidRegistrations, error: errPaid } = await supabase
       .from('registrations')
       .select('*', { count: 'exact', head: true })
-      .eq('registration_status', 'paid')
+      .in('registration_status', ['paid', 'claimed'])
 
     const { count: pendingRegistrations, error: errPending } = await supabase
       .from('registrations')

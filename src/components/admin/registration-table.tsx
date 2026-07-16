@@ -97,6 +97,8 @@ export function RegistrationTable() {
     switch (status) {
       case 'paid':
         return 'bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20'
+      case 'claimed':
+        return 'bg-indigo-50 text-indigo-600 border border-indigo-100'
       case 'pending_payment':
         return 'bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20'
       case 'expired':
@@ -112,6 +114,8 @@ export function RegistrationTable() {
     switch (status) {
       case 'paid':
         return 'Lunas'
+      case 'claimed':
+        return 'Lunas (Racepack)'
       case 'pending_payment':
         return 'Menunggu'
       case 'expired':

@@ -120,6 +120,8 @@ export function StatusLookupForm({ initialReg }: StatusLookupFormProps) {
     switch (status) {
       case 'paid':
         return 'bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20'
+      case 'claimed':
+        return 'bg-indigo-50 text-indigo-600 border border-indigo-100'
       case 'pending_payment':
         return 'bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20'
       case 'expired':
@@ -135,6 +137,8 @@ export function StatusLookupForm({ initialReg }: StatusLookupFormProps) {
     switch (status) {
       case 'paid':
         return 'Lunas'
+      case 'claimed':
+        return 'Lunas (Racepack Diambil)'
       case 'pending_payment':
         return 'Menunggu Pembayaran'
       case 'expired':
@@ -335,8 +339,8 @@ export function StatusLookupForm({ initialReg }: StatusLookupFormProps) {
                   )}
                 </div>
 
-                {/* Render E-Ticket for Paid */}
-                {reg.registration_status === 'paid' && reg.qr_code_token && (
+                {/* Render E-Ticket for Paid or Claimed */}
+                {((reg.registration_status as string) === 'paid' || (reg.registration_status as string) === 'claimed') && reg.qr_code_token && (
                   <div className="print:m-0">
                     <ETicket
                       fullName={reg.full_name}

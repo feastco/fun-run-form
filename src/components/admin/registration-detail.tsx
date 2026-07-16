@@ -38,10 +38,37 @@ export function RegistrationDetail({ registrationId, onClose }: RegistrationDeta
     }
   }
 
+  const [actionLoading, setActionLoading] = useState(false)
+
+  const handleToggleRacepack = async () => {
+    if (!detail?.qr_code_token) return
+    setActionLoading(true)
+    try {
+      const isCurrentlyClaimed = detail.registration_status === 'claimed'
+      const response = await fetch(`/api/v1/verify/${detail.qr_code_token}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: isCurrentlyClaimed ? 'paid' : 'claimed' })
+      })
+      const resJson = await response.json()
+      if (!response.ok) {
+        throw new Error(resJson.message || 'Gagal memperbarui status racepack.')
+      }
+      await fetchDetail()
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Terjadi kesalahan sistem.'
+      alert(msg)
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
       case 'paid':
         return 'bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20'
+      case 'claimed':
+        return 'bg-indigo-50 text-indigo-600 border border-indigo-100'
       case 'pending_payment':
         return 'bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20'
       case 'expired':
@@ -57,6 +84,8 @@ export function RegistrationDetail({ registrationId, onClose }: RegistrationDeta
     switch (status) {
       case 'paid':
         return 'Lunas'
+      case 'claimed':
+        return 'Lunas (Racepack Diambil)'
       case 'pending_payment':
         return 'Menunggu Pembayaran'
       case 'expired':
@@ -123,6 +152,40 @@ export function RegistrationDetail({ registrationId, onClose }: RegistrationDeta
                   </span>
                 </div>
               </div>
+
+              {/* Section 1.5: Status Pengambilan Racepack */}
+              {(detail.registration_status === 'paid' || detail.registration_status === 'claimed') && (
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-indigo-50/50 rounded-xl border border-indigo-100/50">
+                  <div className="flex items-center gap-2.5">
+                    <span className="p-2 bg-indigo-100 text-indigo-600 rounded-lg">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                      </svg>
+                    </span>
+                    <div>
+                      <span className="text-[10px] text-indigo-500 uppercase font-bold tracking-wider">Status Pengambilan Racepack</span>
+                      <h5 className="text-sm font-extrabold text-secondary mt-0.5">
+                        {detail.registration_status === 'claimed' ? (
+                          <span className="text-indigo-600">Sudah Diambil</span>
+                        ) : (
+                          <span className="text-amber-600">Belum Diambil</span>
+                        )}
+                      </h5>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleToggleRacepack}
+                    disabled={actionLoading}
+                    className={`px-4 h-9 font-bold text-xs rounded-lg transition-all cursor-pointer disabled:opacity-50 ${
+                      detail.registration_status === 'claimed'
+                        ? 'bg-white border border-gray-300 text-text-secondary hover:bg-gray-50'
+                        : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                    }`}
+                  >
+                    {actionLoading ? 'Memproses...' : detail.registration_status === 'claimed' ? 'Tandai Belum Diambil' : 'Tandai Sudah Diambil'}
+                  </button>
+                </div>
+              )}
 
               {/* Section 2: Data Diri */}
               <div className="space-y-4">

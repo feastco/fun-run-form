@@ -22,7 +22,7 @@ interface DashboardData {
     registration_number: string
     full_name: string
     created_at: string
-    registration_status: 'pending_payment' | 'paid' | 'expired' | 'cancelled'
+    registration_status: 'pending_payment' | 'paid' | 'claimed' | 'expired' | 'cancelled'
     category_name: string
   }[]
 }
@@ -58,6 +58,8 @@ export default function AdminDashboardPage() {
     switch (status) {
       case 'paid':
         return 'bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20'
+      case 'claimed':
+        return 'bg-indigo-50 text-indigo-600 border border-indigo-100'
       case 'pending_payment':
         return 'bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20'
       case 'expired':
@@ -73,6 +75,8 @@ export default function AdminDashboardPage() {
     switch (status) {
       case 'paid':
         return 'Lunas'
+      case 'claimed':
+        return 'Lunas (Racepack)'
       case 'pending_payment':
         return 'Menunggu'
       case 'expired':
@@ -194,7 +198,7 @@ export default function AdminDashboardPage() {
                 <tbody className="divide-y divide-gray-50">
                   {stats.recentRegistrations.map((reg) => (
                     <tr key={reg.id} className="text-text-primary hover:bg-surface transition-all">
-                      <td className="py-3 font-mono font-bold text-xs text-secondary">{reg.registration_number}</td>
+                      <td className="py-3 font-bold text-sm text-secondary">{reg.registration_number}</td>
                       <td className="py-3 font-semibold">{reg.full_name}</td>
                       <td className="py-3 text-xs text-text-secondary font-medium">{reg.category_name}</td>
                       <td className="py-3">
