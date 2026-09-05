@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Fun Run Form
 
-## Getting Started
+> Running event registration system — Next.js + TypeScript + Supabase
 
-First, run the development server:
+[![Live Demo](https://img.shields.io/badge/Live-fun--run--form.vercel.app-000?style=for-the-badge&logo=vercel)](https://fun-run-form.vercel.app)
+[![GitHub](https://img.shields.io/badge/GitHub-feastco%2Ffun--run--form-181717?style=for-the-badge&logo=github)](https://github.com/feastco/fun-run-form)
+[![Stack](https://img.shields.io/badge/Stack-Next.js%2014%20%7C%20TypeScript%20%7C%20Supabase-blue?style=flat-square)](#tech-stack)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Participant registration system for running events. Handles participant data collection, form validation, and administrative management for event organizers.
+
+## 🚀 Live Demo
+
+🔗 **https://fun-run-form.vercel.app**
+
+## ✨ Features
+
+- **Participant registration** — multi-step form with validation
+- **Event categories** — support for multiple race categories (5K, 10K, etc.)
+- **Data persistence** — entries stored in Supabase (PostgreSQL)
+- **Admin dashboard** — view and manage registered participants
+- **Responsive UI** — mobile-first with Tailwind CSS
+
+## 🛠 Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 14 (App Router) |
+| Language | TypeScript |
+| Database | Supabase (PostgreSQL) |
+| Styling | Tailwind CSS |
+| Deployment | Vercel |
+| Auth | Supabase Auth |
+
+## 📂 Project Structure
+
+```
+fun-run-form/
+├── app/                # Next.js App Router pages
+├── components/         # Reusable React components
+├── lib/                # Supabase client & utilities
+├── public/             # Static assets
+├── types/              # TypeScript type definitions
+└── vercel.json         # Vercel deployment config
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ⚡ Quick Start
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Clone
+git clone https://github.com/feastco/fun-run-form.git
+cd fun-run-form
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Install dependencies
+npm install
 
-## Learn More
+# Setup environment
+cp .env.example .env.local
+# Fill in: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-To learn more about Next.js, take a look at the following resources:
+# Run dev server
+npm run dev
+# Open http://localhost:3000
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 👤 Author
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Fisco Maulana Ikhwan** — Informatics Engineering (D3), Universitas Dian Nuswantoro
+- GitHub: [@feastco](https://github.com/feastco)
+- LinkedIn: [fiscomaulanaikhwan](https://www.linkedin.com/in/fiscomaulanaikhwan)
